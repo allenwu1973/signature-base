@@ -17,6 +17,23 @@
 
 */
 
+//2017.9.4 add
+rule HackTool_nbtscan
+{
+   strings:
+      $s = "nbtscan 1.0.35 - 2008-04-08 - http://www.unixwiz.net/tools/"
+      $p1 = "-P        generate results in perl hashref format"
+      $p2 = "-w <n>    Wait <n> msecs after each write (default=%d ms)"
+      $p3 = "-T <n>    Timeout the no-responses in <n> seconds (default=%d secs)"
+      $p4 = "-m        include MAC address in response (implied by '-f')"
+      $p5 = "-p <n>    bind to UDP Port <n> (default=%d)"
+      $p6 = "-n        No looking up inverse names of IP addresses responding"
+      $p7 = "ranges. Ranges can be in /nbits notation (\"192.168.12.0/24\")"
+    condition:
+      $s or 3 of ($p*)
+}
+
+
 /* WCE */
 
 rule Hacktool_WindowsCredentialEditor
