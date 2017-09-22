@@ -14,9 +14,50 @@
 
 */
 
-rule Weevely_Webshell {
+
+
+//2016.4.29新增
+rule Hacktool_webshell_reGeorg
+{
+    strings:
+        $doc1 = "For more information, see:"
+        $doc2 = "https://github.com/sensepost/reGeorg"
+        $msg  = "Georg says, 'All seems fine'"
+
+        $aspx1 = "Request.HttpMethod == \"POST\""
+        $aspx2 = "if (cmd == \"CONNECT\")"
+        $aspx3 = "else if (cmd == \"DISCONNECT\")"
+        $aspx4 = "else if (cmd == \"FORWARD\")"
+
+        $php1 = "$arh_key = preg_replace($rx_http, '', $key);"
+        $php2 = "$_SESSION[\"writebuf\"] = \"\";"
+        $php3 = "header('X-ERROR: No more running, close now');"
+        $php4 = "$readBuffer = $_SESSION[\"readbuf\"];"
+
+    condition:
+        all of ($doc*) or $msg  or all of ($aspx*) or all of ($php*) 
+}
+
+
+
+//2016.3.25新增
+rule Hacktool_JPEG_EXIF_Contains_eval
+{
+    meta:
+        author = "Didier Stevens (https://DidierStevens.com)"
+        description = "Detect eval function inside JPG EXIF header (http://blog.sucuri.net/2013/07/malware-hidden-inside-jpg-exif-headers.html)"
+        method = "Detect JPEG file and EXIF header ($a) and eval function ($b) inside EXIF data"
+    strings:
+        $a = {FF E1 ?? ?? 45 78 69 66 00}
+        $b = /\beval\s*\(/
+    condition:
+        uint16be(0x00) == 0xFFD8 and $a and $b in (@a + 0x12 .. @a + 0x02 + uint16be(@a + 0x02) - 0x06)
+}
+
+
+rule Hacktool_Weevely_Webshell {
 	meta:
-		description = "Weevely Webshell - Generic Rule - heavily scrambled tiny web shell"
+		description = "Weevely Webshell - Generic Rule Hacktool_- heavily scrambled tiny web shell"
 		author = "Florian Roth"
 		reference = "http://www.ehacking.net/2014/12/weevely-php-stealth-web-backdoor-kali.html"
 		date = "2014/12/14"
@@ -31,7 +72,7 @@ rule Weevely_Webshell {
 		$php at 0 and all of ($s*) and filesize > 570 and filesize < 800
 }
 
-rule webshell_h4ntu_shell_powered_by_tsoi_ {
+rule Hacktool_webshell_h4ntu_shell_powered_by_tsoi_ {
 	meta:
 		description = "Web Shell - file h4ntu shell [powered by tsoi].php"
 		author = "Florian Roth"
@@ -46,7 +87,7 @@ rule webshell_h4ntu_shell_powered_by_tsoi_ {
 	condition:
 		all of them
 }
-rule webshell_PHP_sql {
+rule Hacktool_webshell_PHP_sql {
 	meta:
 		description = "Web Shell - file sql.php"
 		author = "Florian Roth"
@@ -59,7 +100,7 @@ rule webshell_PHP_sql {
 	condition:
 		all of them
 }
-rule webshell_PHP_a {
+rule Hacktool_webshell_PHP_a {
 	meta:
 		description = "Web Shell - file a.php"
 		author = "Florian Roth"
@@ -73,7 +114,7 @@ rule webshell_PHP_a {
 	condition:
 		2 of them
 }
-rule webshell_iMHaPFtp_2 {
+rule Hacktool_webshell_iMHaPFtp_2 {
 	meta:
 		description = "Web Shell - file iMHaPFtp.php"
 		author = "Florian Roth"
@@ -86,7 +127,7 @@ rule webshell_iMHaPFtp_2 {
 	condition:
 		1 of them
 }
-rule webshell_Jspspyweb {
+rule Hacktool_webshell_Jspspyweb {
 	meta:
 		description = "Web Shell - file Jspspyweb.jsp"
 		author = "Florian Roth"
@@ -99,7 +140,7 @@ rule webshell_Jspspyweb {
 	condition:
 		all of them
 }
-rule webshell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
+rule Hacktool_webshell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
 	meta:
 		description = "Web Shell - file Safe_Mode Bypass PHP 4.4.2 and PHP 5.1.2.php"
 		author = "Florian Roth"
@@ -112,7 +153,7 @@ rule webshell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
 	condition:
 		1 of them
 }
-rule webshell_SimAttacker_Vrsion_1_0_0_priv8_4_My_friend {
+rule Hacktool_webshell_SimAttacker_Vrsion_1_0_0_priv8_4_My_friend {
 	meta:
 		description = "Web Shell - file SimAttacker - Vrsion 1.0.0 - priv8 4 My friend.php"
 		author = "Florian Roth"
@@ -125,7 +166,7 @@ rule webshell_SimAttacker_Vrsion_1_0_0_priv8_4_My_friend {
 	condition:
 		1 of them
 }
-rule webshell_phpshell_2_1_pwhash {
+rule Hacktool_webshell_phpshell_2_1_pwhash {
 	meta:
 		description = "Web Shell - file pwhash.php"
 		author = "Florian Roth"
@@ -138,7 +179,7 @@ rule webshell_phpshell_2_1_pwhash {
 	condition:
 		1 of them
 }
-rule webshell_PHPRemoteView {
+rule Hacktool_webshell_PHPRemoteView {
 	meta:
 		description = "Web Shell - file PHPRemoteView.php"
 		author = "Florian Roth"
@@ -151,7 +192,7 @@ rule webshell_PHPRemoteView {
 	condition:
 		1 of them
 }
-rule webshell_jsp_12302 {
+rule Hacktool_webshell_jsp_12302 {
 	meta:
 		description = "Web Shell - file 12302.jsp"
 		author = "Florian Roth"
@@ -165,7 +206,7 @@ rule webshell_jsp_12302 {
 	condition:
 		all of them
 }
-rule webshell_caidao_shell_guo {
+rule Hacktool_webshell_caidao_shell_guo {
 	meta:
 		description = "Web Shell - file guo.php"
 		author = "Florian Roth"
@@ -178,7 +219,7 @@ rule webshell_caidao_shell_guo {
 	condition:
 		1 of them
 }
-rule webshell_PHP_redcod {
+rule Hacktool_webshell_PHP_redcod {
 	meta:
 		description = "Web Shell - file redcod.php"
 		author = "Florian Roth"
@@ -191,7 +232,7 @@ rule webshell_PHP_redcod {
 	condition:
 		all of them
 }
-rule webshell_remview_fix {
+rule Hacktool_webshell_remview_fix {
 	meta:
 		description = "Web Shell - file remview_fix.php"
 		author = "Florian Roth"
@@ -204,7 +245,7 @@ rule webshell_remview_fix {
 	condition:
 		1 of them
 }
-rule webshell_asp_cmd {
+rule Hacktool_webshell_asp_cmd {
 	meta:
 		description = "Web Shell - file cmd.asp"
 		author = "Florian Roth"
@@ -218,7 +259,7 @@ rule webshell_asp_cmd {
 	condition:
 		1 of them
 }
-rule webshell_php_sh_server {
+rule Hacktool_webshell_php_sh_server {
 	meta:
 		description = "Web Shell - file server.php"
 		author = "Florian Roth"
@@ -230,7 +271,7 @@ rule webshell_php_sh_server {
 	condition:
 		all of them
 }
-rule webshell_PH_Vayv_PH_Vayv {
+rule Hacktool_webshell_PH_Vayv_PH_Vayv {
 	meta:
 		description = "Web Shell - file PH Vayv.php"
 		author = "Florian Roth"
@@ -243,7 +284,7 @@ rule webshell_PH_Vayv_PH_Vayv {
 	condition:
 		1 of them
 }
-rule webshell_caidao_shell_ice {
+rule Hacktool_webshell_caidao_shell_ice {
 	meta:
 		description = "Web Shell - file ice.asp"
 		author = "Florian Roth"
@@ -255,7 +296,7 @@ rule webshell_caidao_shell_ice {
 	condition:
 		all of them
 }
-rule webshell_cihshell_fix {
+rule Hacktool_webshell_cihshell_fix {
 	meta:
 		description = "Web Shell - file cihshell_fix.php"
 		author = "Florian Roth"
@@ -268,7 +309,7 @@ rule webshell_cihshell_fix {
 	condition:
 		1 of them
 }
-rule webshell_asp_shell {
+rule Hacktool_webshell_asp_shell {
 	meta:
 		description = "Web Shell - file shell.asp"
 		author = "Florian Roth"
@@ -281,7 +322,7 @@ rule webshell_asp_shell {
 	condition:
 		all of them
 }
-rule webshell_Private_i3lue {
+rule Hacktool_webshell_Private_i3lue {
 	meta:
 		description = "Web Shell - file Private-i3lue.php"
 		author = "Florian Roth"
@@ -293,7 +334,7 @@ rule webshell_Private_i3lue {
 	condition:
 		all of them
 }
-rule webshell_php_up {
+rule Hacktool_webshell_php_up {
 	meta:
 		description = "Web Shell - file up.php"
 		author = "Florian Roth"
@@ -307,7 +348,7 @@ rule webshell_php_up {
 	condition:
 		2 of them
 }
-rule webshell_Mysql_interface_v1_0 {
+rule Hacktool_webshell_Mysql_interface_v1_0 {
 	meta:
 		description = "Web Shell - file Mysql interface v1.0.php"
 		author = "Florian Roth"
@@ -319,7 +360,7 @@ rule webshell_Mysql_interface_v1_0 {
 	condition:
 		all of them
 }
-rule webshell_php_s_u {
+rule Hacktool_webshell_php_s_u {
 	meta:
 		description = "Web Shell - file s-u.php"
 		author = "Florian Roth"
@@ -331,7 +372,7 @@ rule webshell_php_s_u {
 	condition:
 		all of them
 }
-rule webshell_phpshell_2_1_config {
+rule Hacktool_webshell_phpshell_2_1_config {
 	meta:
 		description = "Web Shell - file config.php"
 		author = "Florian Roth"
@@ -343,7 +384,7 @@ rule webshell_phpshell_2_1_config {
 	condition:
 		all of them
 }
-rule webshell_asp_EFSO_2 {
+rule Hacktool_webshell_asp_EFSO_2 {
 	meta:
 		description = "Web Shell - file EFSO_2.asp"
 		author = "Florian Roth"
@@ -355,7 +396,7 @@ rule webshell_asp_EFSO_2 {
 	condition:
 		all of them
 }
-rule webshell_jsp_up {
+rule Hacktool_webshell_jsp_up {
 	meta:
 		description = "Web Shell - file up.jsp"
 		author = "Florian Roth"
@@ -367,7 +408,7 @@ rule webshell_jsp_up {
 	condition:
 		all of them
 }
-rule webshell_NetworkFileManagerPHP {
+rule Hacktool_webshell_NetworkFileManagerPHP {
 	meta:
 		description = "Web Shell - file NetworkFileManagerPHP.php"
 		author = "Florian Roth"
@@ -379,7 +420,7 @@ rule webshell_NetworkFileManagerPHP {
 	condition:
 		all of them
 }
-rule webshell_Server_Variables {
+rule Hacktool_webshell_Server_Variables {
 	meta:
 		description = "Web Shell - file Server Variables.asp"
 		author = "Florian Roth"
@@ -392,7 +433,7 @@ rule webshell_Server_Variables {
 	condition:
 		all of them
 }
-rule webshell_caidao_shell_ice_2 {
+rule Hacktool_webshell_caidao_shell_ice_2 {
 	meta:
 		description = "Web Shell - file ice.php"
 		author = "Florian Roth"
@@ -404,7 +445,7 @@ rule webshell_caidao_shell_ice_2 {
 	condition:
 		all of them
 }
-rule webshell_caidao_shell_mdb {
+rule Hacktool_webshell_caidao_shell_mdb {
 	meta:
 		description = "Web Shell - file mdb.asp"
 		author = "Florian Roth"
@@ -416,7 +457,7 @@ rule webshell_caidao_shell_mdb {
 	condition:
 		all of them
 }
-rule webshell_jsp_guige {
+rule Hacktool_webshell_jsp_guige {
 	meta:
 		description = "Web Shell - file guige.jsp"
 		author = "Florian Roth"
@@ -428,7 +469,7 @@ rule webshell_jsp_guige {
 	condition:
 		all of them
 }
-rule webshell_phpspy2010 {
+rule Hacktool_webshell_phpspy2010 {
 	meta:
 		description = "Web Shell - file phpspy2010.php"
 		author = "Florian Roth"
@@ -442,7 +483,7 @@ rule webshell_phpspy2010 {
 	condition:
 		all of them
 }
-rule webshell_asp_ice {
+rule Hacktool_webshell_asp_ice {
 	meta:
 		description = "Web Shell - file ice.asp"
 		author = "Florian Roth"
@@ -454,7 +495,7 @@ rule webshell_asp_ice {
 	condition:
 		all of them
 }
-rule webshell_drag_system {
+rule Hacktool_webshell_drag_system {
 	meta:
 		description = "Web Shell - file system.jsp"
 		author = "Florian Roth"
@@ -466,7 +507,7 @@ rule webshell_drag_system {
 	condition:
 		all of them
 }
-rule webshell_DarkBlade1_3_asp_indexx {
+rule Hacktool_webshell_DarkBlade1_3_asp_indexx {
 	meta:
 		description = "Web Shell - file indexx.asp"
 		author = "Florian Roth"
@@ -478,7 +519,7 @@ rule webshell_DarkBlade1_3_asp_indexx {
 	condition:
 		all of them
 }
-rule webshell_phpshell3 {
+rule Hacktool_webshell_phpshell3 {
 	meta:
 		description = "Web Shell - file phpshell3.php"
 		author = "Florian Roth"
@@ -492,7 +533,7 @@ rule webshell_phpshell3 {
 	condition:
 		2 of them
 }
-rule webshell_jsp_hsxa {
+rule Hacktool_webshell_jsp_hsxa {
 	meta:
 		description = "Web Shell - file hsxa.jsp"
 		author = "Florian Roth"
@@ -504,7 +545,7 @@ rule webshell_jsp_hsxa {
 	condition:
 		all of them
 }
-rule webshell_jsp_utils {
+rule Hacktool_webshell_jsp_utils {
 	meta:
 		description = "Web Shell - file utils.jsp"
 		author = "Florian Roth"
@@ -517,7 +558,7 @@ rule webshell_jsp_utils {
 	condition:
 		all of them
 }
-rule webshell_asp_01 {
+rule Hacktool_webshell_asp_01 {
 	meta:
 		description = "Web Shell - file 01.asp"
 		author = "Florian Roth"
@@ -529,7 +570,7 @@ rule webshell_asp_01 {
 	condition:
 		all of them
 }
-rule webshell_asp_404 {
+rule Hacktool_webshell_asp_404 {
 	meta:
 		description = "Web Shell - file 404.asp"
 		author = "Florian Roth"
@@ -541,7 +582,7 @@ rule webshell_asp_404 {
 	condition:
 		all of them
 }
-rule webshell_webshell_cnseay02_1 {
+rule Hacktool_webshell_webshell_cnseay02_1 {
 	meta:
 		description = "Web Shell - file webshell-cnseay02-1.php"
 		author = "Florian Roth"
@@ -553,7 +594,7 @@ rule webshell_webshell_cnseay02_1 {
 	condition:
 		all of them
 }
-rule webshell_php_fbi {
+rule Hacktool_webshell_php_fbi {
 	meta:
 		description = "Web Shell - file fbi.php"
 		author = "Florian Roth"
@@ -565,7 +606,7 @@ rule webshell_php_fbi {
 	condition:
 		all of them
 }
-rule webshell_B374kPHP_B374k {
+rule Hacktool_webshell_B374kPHP_B374k {
 	meta:
 		description = "Web Shell - file B374k.php"
 		author = "Florian Roth"
@@ -580,7 +621,7 @@ rule webshell_B374kPHP_B374k {
 	condition:
 		1 of them
 }
-rule webshell_cmd_asp_5_1 {
+rule Hacktool_webshell_cmd_asp_5_1 {
 	meta:
 		description = "Web Shell - file cmd-asp-5.1.asp"
 		author = "Florian Roth"
@@ -592,7 +633,7 @@ rule webshell_cmd_asp_5_1 {
 	condition:
 		all of them
 }
-rule webshell_php_dodo_zip {
+rule Hacktool_webshell_php_dodo_zip {
 	meta:
 		description = "Web Shell - file zip.php"
 		author = "Florian Roth"
@@ -605,7 +646,7 @@ rule webshell_php_dodo_zip {
 	condition:
 		all of them
 }
-rule webshell_aZRaiLPhp_v1_0 {
+rule Hacktool_webshell_aZRaiLPhp_v1_0 {
 	meta:
 		description = "Web Shell - file aZRaiLPhp v1.0.php"
 		author = "Florian Roth"
@@ -618,7 +659,7 @@ rule webshell_aZRaiLPhp_v1_0 {
 	condition:
 		all of them
 }
-rule webshell_php_list {
+rule Hacktool_webshell_php_list {
 	meta:
 		description = "Web Shell - file list.php"
 		author = "Florian Roth"
@@ -632,7 +673,7 @@ rule webshell_php_list {
 	condition:
 		1 of them
 }
-rule webshell_ironshell {
+rule Hacktool_webshell_ironshell {
 	meta:
 		description = "Web Shell - file ironshell.php"
 		author = "Florian Roth"
@@ -645,7 +686,7 @@ rule webshell_ironshell {
 	condition:
 		all of them
 }
-rule webshell_caidao_shell_404 {
+rule Hacktool_webshell_caidao_shell_404 {
 	meta:
 		description = "Web Shell - file 404.php"
 		author = "Florian Roth"
@@ -657,7 +698,7 @@ rule webshell_caidao_shell_404 {
 	condition:
 		all of them
 }
-rule webshell_ASP_aspydrv {
+rule Hacktool_webshell_ASP_aspydrv {
 	meta:
 		description = "Web Shell - file aspydrv.asp"
 		author = "Florian Roth"
@@ -669,7 +710,7 @@ rule webshell_ASP_aspydrv {
 	condition:
 		all of them
 }
-rule webshell_jsp_web {
+rule Hacktool_webshell_jsp_web {
 	meta:
 		description = "Web Shell - file web.jsp"
 		author = "Florian Roth"
@@ -681,7 +722,7 @@ rule webshell_jsp_web {
 	condition:
 		all of them
 }
-rule webshell_mysqlwebsh {
+rule Hacktool_webshell_mysqlwebsh {
 	meta:
 		description = "Web Shell - file mysqlwebsh.php"
 		author = "Florian Roth"
@@ -693,7 +734,7 @@ rule webshell_mysqlwebsh {
 	condition:
 		all of them
 }
-rule webshell_jspShell {
+rule Hacktool_webshell_jspShell {
 	meta:
 		description = "Web Shell - file jspShell.jsp"
 		author = "Florian Roth"
@@ -706,7 +747,7 @@ rule webshell_jspShell {
 	condition:
 		all of them
 }
-rule webshell_Dx_Dx {
+rule Hacktool_webshell_Dx_Dx {
 	meta:
 		description = "Web Shell - file Dx.php"
 		author = "Florian Roth"
@@ -719,7 +760,7 @@ rule webshell_Dx_Dx {
 	condition:
 		1 of them
 }
-rule webshell_asp_ntdaddy {
+rule Hacktool_webshell_asp_ntdaddy {
 	meta:
 		description = "Web Shell - file ntdaddy.asp"
 		author = "Florian Roth"
@@ -732,7 +773,7 @@ rule webshell_asp_ntdaddy {
 	condition:
 		1 of them
 }
-rule webshell_MySQL_Web_Interface_Version_0_8 {
+rule Hacktool_webshell_MySQL_Web_Interface_Version_0_8 {
 	meta:
 		description = "Web Shell - file MySQL Web Interface Version 0.8.php"
 		author = "Florian Roth"
@@ -744,7 +785,7 @@ rule webshell_MySQL_Web_Interface_Version_0_8 {
 	condition:
 		all of them
 }
-rule webshell_elmaliseker_2 {
+rule Hacktool_webshell_elmaliseker_2 {
 	meta:
 		description = "Web Shell - file elmaliseker.asp"
 		author = "Florian Roth"
@@ -757,7 +798,7 @@ rule webshell_elmaliseker_2 {
 	condition:
 		all of them
 }
-rule webshell_ASP_RemExp {
+rule Hacktool_webshell_ASP_RemExp {
 	meta:
 		description = "Web Shell - file RemExp.asp"
 		author = "Florian Roth"
@@ -770,7 +811,7 @@ rule webshell_ASP_RemExp {
 	condition:
 		all of them
 }
-rule webshell_jsp_list1 {
+rule Hacktool_webshell_jsp_list1 {
 	meta:
 		description = "Web Shell - file list1.jsp"
 		author = "Florian Roth"
@@ -783,7 +824,7 @@ rule webshell_jsp_list1 {
 	condition:
 		all of them
 }
-rule webshell_phpkit_1_0_odd {
+rule Hacktool_webshell_phpkit_1_0_odd {
 	meta:
 		description = "Web Shell - file odd.php"
 		author = "Florian Roth"
@@ -797,7 +838,7 @@ rule webshell_phpkit_1_0_odd {
 	condition:
 		all of them
 }
-rule webshell_jsp_123 {
+rule Hacktool_webshell_jsp_123 {
 	meta:
 		description = "Web Shell - file 123.jsp"
 		author = "Florian Roth"
@@ -811,7 +852,7 @@ rule webshell_jsp_123 {
 	condition:
 		all of them
 }
-rule webshell_asp_1 {
+rule Hacktool_webshell_asp_1 {
 	meta:
 		description = "Web Shell - file 1.asp"
 		author = "Florian Roth"
@@ -824,7 +865,7 @@ rule webshell_asp_1 {
 	condition:
 		all of them
 }
-rule webshell_ASP_tool {
+rule Hacktool_webshell_ASP_tool {
 	meta:
 		description = "Web Shell - file tool.asp"
 		author = "Florian Roth"
@@ -838,7 +879,7 @@ rule webshell_ASP_tool {
 	condition:
 		2 of them
 }
-rule webshell_cmd_win32 {
+rule Hacktool_webshell_cmd_win32 {
 	meta:
 		description = "Web Shell - file cmd_win32.jsp"
 		author = "Florian Roth"
@@ -851,7 +892,7 @@ rule webshell_cmd_win32 {
 	condition:
 		2 of them
 }
-rule webshell_jsp_jshell {
+rule Hacktool_webshell_jsp_jshell {
 	meta:
 		description = "Web Shell - file jshell.jsp"
 		author = "Florian Roth"
@@ -867,7 +908,7 @@ rule webshell_jsp_jshell {
 	condition:
 		all of them
 }
-rule webshell_ASP_zehir4 {
+rule Hacktool_webshell_ASP_zehir4 {
 	meta:
 		description = "Web Shell - file zehir4.asp"
 		author = "Florian Roth"
@@ -879,7 +920,7 @@ rule webshell_ASP_zehir4 {
 	condition:
 		all of them
 }
-rule webshell_wsb_idc {
+rule Hacktool_webshell_wsb_idc {
 	meta:
 		description = "Web Shell - file idc.php"
 		author = "Florian Roth"
@@ -892,7 +933,7 @@ rule webshell_wsb_idc {
 	condition:
 		1 of them
 }
-rule webshell_cpg_143_incl_xpl {
+rule Hacktool_webshell_cpg_143_incl_xpl {
 	meta:
 		description = "Web Shell - file cpg_143_incl_xpl.php"
 		author = "Florian Roth"
@@ -905,7 +946,7 @@ rule webshell_cpg_143_incl_xpl {
 	condition:
 		1 of them
 }
-rule webshell_mumaasp_com {
+rule Hacktool_webshell_mumaasp_com {
 	meta:
 		description = "Web Shell - file mumaasp.com.asp"
 		author = "Florian Roth"
@@ -917,7 +958,7 @@ rule webshell_mumaasp_com {
 	condition:
 		all of them
 }
-rule webshell_php_404 {
+rule Hacktool_webshell_php_404 {
 	meta:
 		description = "Web Shell - file 404.php"
 		author = "Florian Roth"
@@ -929,7 +970,7 @@ rule webshell_php_404 {
 	condition:
 		all of them
 }
-rule webshell_webshell_cnseay_x {
+rule Hacktool_webshell_webshell_cnseay_x {
 	meta:
 		description = "Web Shell - file webshell-cnseay-x.php"
 		author = "Florian Roth"
@@ -941,7 +982,7 @@ rule webshell_webshell_cnseay_x {
 	condition:
 		all of them
 }
-rule webshell_asp_up {
+rule Hacktool_webshell_asp_up {
 	meta:
 		description = "Web Shell - file up.asp"
 		author = "Florian Roth"
@@ -954,7 +995,7 @@ rule webshell_asp_up {
 	condition:
 		1 of them
 }
-rule webshell_phpkit_0_1a_odd {
+rule Hacktool_webshell_phpkit_0_1a_odd {
 	meta:
 		description = "Web Shell - file odd.php"
 		author = "Florian Roth"
@@ -969,7 +1010,7 @@ rule webshell_phpkit_0_1a_odd {
 	condition:
 		2 of them
 }
-rule webshell_ASP_cmd {
+rule Hacktool_webshell_ASP_cmd {
 	meta:
 		description = "Web Shell - file cmd.asp"
 		author = "Florian Roth"
@@ -981,7 +1022,7 @@ rule webshell_ASP_cmd {
 	condition:
 		all of them
 }
-rule webshell_PHP_Shell_x3 {
+rule Hacktool_webshell_PHP_Shell_x3 {
 	meta:
 		description = "Web Shell - file PHP Shell.php"
 		author = "Florian Roth"
@@ -995,7 +1036,7 @@ rule webshell_PHP_Shell_x3 {
 	condition:
 		2 of them
 }
-rule webshell_PHP_g00nv13 {
+rule Hacktool_webshell_PHP_g00nv13 {
 	meta:
 		description = "Web Shell - file g00nv13.php"
 		author = "Florian Roth"
@@ -1008,7 +1049,7 @@ rule webshell_PHP_g00nv13 {
 	condition:
 		all of them
 }
-rule webshell_php_h6ss {
+rule Hacktool_webshell_php_h6ss {
 	meta:
 		description = "Web Shell - file h6ss.php"
 		author = "Florian Roth"
@@ -1020,7 +1061,7 @@ rule webshell_php_h6ss {
 	condition:
 		all of them
 }
-rule webshell_jsp_zx {
+rule Hacktool_webshell_jsp_zx {
 	meta:
 		description = "Web Shell - file zx.jsp"
 		author = "Florian Roth"
@@ -1032,7 +1073,7 @@ rule webshell_jsp_zx {
 	condition:
 		all of them
 }
-rule webshell_Ani_Shell {
+rule Hacktool_webshell_Ani_Shell {
 	meta:
 		description = "Web Shell - file Ani-Shell.php"
 		author = "Florian Roth"
@@ -1046,7 +1087,7 @@ rule webshell_Ani_Shell {
 	condition:
 		1 of them
 }
-rule webshell_jsp_k8cmd {
+rule Hacktool_webshell_jsp_k8cmd {
 	meta:
 		description = "Web Shell - file k8cmd.jsp"
 		author = "Florian Roth"
@@ -1058,8 +1099,7 @@ rule webshell_jsp_k8cmd {
 	condition:
 		all of them
 }
-
-rule webshell_jsp_cmd {
+rule Hacktool_webshell_jsp_cmd {
 	meta:
 		description = "Web Shell - file cmd.jsp"
 		author = "Florian Roth"
@@ -1071,8 +1111,7 @@ rule webshell_jsp_cmd {
 	condition:
 		all of them
 }
-
-rule webshell_jsp_k81 {
+rule Hacktool_webshell_jsp_k81 {
 	meta:
 		description = "Web Shell - file k81.jsp"
 		author = "Florian Roth"
@@ -1085,7 +1124,7 @@ rule webshell_jsp_k81 {
 	condition:
 		1 of them
 }
-rule webshell_ASP_zehir {
+rule Hacktool_webshell_ASP_zehir {
 	meta:
 		description = "Web Shell - file zehir.asp"
 		author = "Florian Roth"
@@ -1097,7 +1136,7 @@ rule webshell_ASP_zehir {
 	condition:
 		all of them
 }
-rule webshell_Worse_Linux_Shell {
+rule Hacktool_webshell_Worse_Linux_Shell {
 	meta:
 		description = "Web Shell - file Worse Linux Shell.php"
 		author = "Florian Roth"
@@ -1109,7 +1148,7 @@ rule webshell_Worse_Linux_Shell {
 	condition:
 		all of them
 }
-rule webshell_zacosmall {
+rule Hacktool_webshell_zacosmall {
 	meta:
 		description = "Web Shell - file zacosmall.php"
 		author = "Florian Roth"
@@ -1121,7 +1160,7 @@ rule webshell_zacosmall {
 	condition:
 		all of them
 }
-rule webshell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
+rule Hacktool_webshell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
 	meta:
 		description = "Web Shell - file Liz0ziM Private Safe Mode Command Execuriton Bypass Exploit.php"
 		author = "Florian Roth"
@@ -1133,7 +1172,7 @@ rule webshell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
 	condition:
 		all of them
 }
-rule webshell_redirect {
+rule Hacktool_webshell_redirect {
 	meta:
 		description = "Web Shell - file redirect.asp"
 		author = "Florian Roth"
@@ -1145,7 +1184,7 @@ rule webshell_redirect {
 	condition:
 		all of them
 }
-rule webshell_jsp_cmdjsp {
+rule Hacktool_webshell_jsp_cmdjsp {
 	meta:
 		description = "Web Shell - file cmdjsp.jsp"
 		author = "Florian Roth"
@@ -1157,7 +1196,7 @@ rule webshell_jsp_cmdjsp {
 	condition:
 		all of them
 }
-rule webshell_Java_Shell {
+rule Hacktool_webshell_Java_Shell {
 	meta:
 		description = "Web Shell - file Java Shell.jsp"
 		author = "Florian Roth"
@@ -1170,7 +1209,7 @@ rule webshell_Java_Shell {
 	condition:
 		1 of them
 }
-rule webshell_asp_1d {
+rule Hacktool_webshell_asp_1d {
 	meta:
 		description = "Web Shell - file 1d.asp"
 		author = "Florian Roth"
@@ -1182,7 +1221,7 @@ rule webshell_asp_1d {
 	condition:
 		all of them
 }
-rule webshell_jsp_IXRbE {
+rule Hacktool_webshell_jsp_IXRbE {
 	meta:
 		description = "Web Shell - file IXRbE.jsp"
 		author = "Florian Roth"
@@ -1194,7 +1233,7 @@ rule webshell_jsp_IXRbE {
 	condition:
 		all of them
 }
-rule webshell_PHP_G5 {
+rule Hacktool_webshell_PHP_G5 {
 	meta:
 		description = "Web Shell - file G5.php"
 		author = "Florian Roth"
@@ -1206,7 +1245,7 @@ rule webshell_PHP_G5 {
 	condition:
 		all of them
 }
-rule webshell_PHP_r57142 {
+rule Hacktool_webshell_PHP_r57142 {
 	meta:
 		description = "Web Shell - file r57142.php"
 		author = "Florian Roth"
@@ -1218,7 +1257,7 @@ rule webshell_PHP_r57142 {
 	condition:
 		all of them
 }
-rule webshell_jsp_tree {
+rule Hacktool_webshell_jsp_tree {
 	meta:
 		description = "Web Shell - file tree.jsp"
 		author = "Florian Roth"
@@ -1231,7 +1270,7 @@ rule webshell_jsp_tree {
 	condition:
 		all of them
 }
-rule webshell_C99madShell_v_3_0_smowu {
+rule Hacktool_webshell_C99madShell_v_3_0_smowu {
 	meta:
 		description = "Web Shell - file smowu.php"
 		author = "Florian Roth"
@@ -1244,7 +1283,7 @@ rule webshell_C99madShell_v_3_0_smowu {
 	condition:
 		1 of them
 }
-rule webshell_simple_backdoor {
+rule Hacktool_webshell_simple_backdoor {
 	meta:
 		description = "Web Shell - file simple-backdoor.php"
 		author = "Florian Roth"
@@ -1258,7 +1297,7 @@ rule webshell_simple_backdoor {
 	condition:
 		2 of them
 }
-rule webshell_PHP_404 {
+rule Hacktool_webshell_PHP_404 {
 	meta:
 		description = "Web Shell - file 404.php"
 		author = "Florian Roth"
@@ -1270,7 +1309,7 @@ rule webshell_PHP_404 {
 	condition:
 		all of them
 }
-rule webshell_Macker_s_Private_PHPShell {
+rule Hacktool_webshell_Macker_s_Private_PHPShell {
 	meta:
 		description = "Web Shell - file Macker's Private PHPShell.php"
 		author = "Florian Roth"
@@ -1284,7 +1323,7 @@ rule webshell_Macker_s_Private_PHPShell {
 	condition:
 		all of them
 }
-rule webshell_Antichat_Shell_v1_3_2 {
+rule Hacktool_webshell_Antichat_Shell_v1_3_2 {
 	meta:
 		description = "Web Shell - file Antichat Shell v1.3.php"
 		author = "Florian Roth"
@@ -1296,7 +1335,7 @@ rule webshell_Antichat_Shell_v1_3_2 {
 	condition:
 		all of them
 }
-rule webshell_Safe_mode_breaker {
+rule Hacktool_webshell_Safe_mode_breaker {
 	meta:
 		description = "Web Shell - file Safe mode breaker.php"
 		author = "Florian Roth"
@@ -1309,7 +1348,7 @@ rule webshell_Safe_mode_breaker {
 	condition:
 		1 of them
 }
-rule webshell_Sst_Sheller {
+rule Hacktool_webshell_Sst_Sheller {
 	meta:
 		description = "Web Shell - file Sst-Sheller.php"
 		author = "Florian Roth"
@@ -1322,7 +1361,7 @@ rule webshell_Sst_Sheller {
 	condition:
 		all of them
 }
-rule webshell_jsp_list {
+rule Hacktool_webshell_jsp_list {
 	meta:
 		description = "Web Shell - file list.jsp"
 		author = "Florian Roth"
@@ -1336,7 +1375,7 @@ rule webshell_jsp_list {
 	condition:
 		all of them
 }
-rule webshell_PHPJackal_v1_5 {
+rule Hacktool_webshell_PHPJackal_v1_5 {
 	meta:
 		description = "Web Shell - file PHPJackal v1.5.php"
 		author = "Florian Roth"
@@ -1349,7 +1388,7 @@ rule webshell_PHPJackal_v1_5 {
 	condition:
 		all of them
 }
-rule webshell_customize {
+rule Hacktool_webshell_customize {
 	meta:
 		description = "Web Shell - file customize.jsp"
 		author = "Florian Roth"
@@ -1361,7 +1400,7 @@ rule webshell_customize {
 	condition:
 		all of them
 }
-rule webshell_s72_Shell_v1_1_Coding {
+rule Hacktool_webshell_s72_Shell_v1_1_Coding {
 	meta:
 		description = "Web Shell - file s72 Shell v1.1 Coding.php"
 		author = "Florian Roth"
@@ -1373,7 +1412,7 @@ rule webshell_s72_Shell_v1_1_Coding {
 	condition:
 		all of them
 }
-rule webshell_jsp_sys3 {
+rule Hacktool_webshell_jsp_sys3 {
 	meta:
 		description = "Web Shell - file sys3.jsp"
 		author = "Florian Roth"
@@ -1387,7 +1426,7 @@ rule webshell_jsp_sys3 {
 	condition:
 		all of them
 }
-rule webshell_jsp_guige02 {
+rule Hacktool_webshell_jsp_guige02 {
 	meta:
 		description = "Web Shell - file guige02.jsp"
 		author = "Florian Roth"
@@ -1400,7 +1439,7 @@ rule webshell_jsp_guige02 {
 	condition:
 		all of them
 }
-rule webshell_php_ghost {
+rule Hacktool_webshell_php_ghost {
 	meta:
 		description = "Web Shell - file ghost.php"
 		author = "Florian Roth"
@@ -1414,7 +1453,7 @@ rule webshell_php_ghost {
 	condition:
 		all of them
 }
-rule webshell_WinX_Shell {
+rule Hacktool_webshell_WinX_Shell {
 	meta:
 		description = "Web Shell - file WinX Shell.php"
 		author = "Florian Roth"
@@ -1427,7 +1466,7 @@ rule webshell_WinX_Shell {
 	condition:
 		all of them
 }
-rule webshell_Crystal_Crystal {
+rule Hacktool_webshell_Crystal_Crystal {
 	meta:
 		description = "Web Shell - file Crystal.php"
 		author = "Florian Roth"
@@ -1440,7 +1479,7 @@ rule webshell_Crystal_Crystal {
 	condition:
 		all of them
 }
-rule webshell_r57_1_4_0 {
+rule Hacktool_webshell_r57_1_4_0 {
 	meta:
 		description = "Web Shell - file r57.1.4.0.php"
 		author = "Florian Roth"
@@ -1455,7 +1494,7 @@ rule webshell_r57_1_4_0 {
 	condition:
 		all of them
 }
-rule webshell_jsp_hsxa1 {
+rule Hacktool_webshell_jsp_hsxa1 {
 	meta:
 		description = "Web Shell - file hsxa1.jsp"
 		author = "Florian Roth"
@@ -1467,7 +1506,7 @@ rule webshell_jsp_hsxa1 {
 	condition:
 		all of them
 }
-rule webshell_asp_ajn {
+rule Hacktool_webshell_asp_ajn {
 	meta:
 		description = "Web Shell - file ajn.asp"
 		author = "Florian Roth"
@@ -1480,7 +1519,7 @@ rule webshell_asp_ajn {
 	condition:
 		all of them
 }
-rule webshell_php_cmd {
+rule Hacktool_webshell_php_cmd {
 	meta:
 		description = "Web Shell - file cmd.php"
 		author = "Florian Roth"
@@ -1494,7 +1533,7 @@ rule webshell_php_cmd {
 	condition:
 		all of them
 }
-rule webshell_asp_list {
+rule Hacktool_webshell_asp_list {
 	meta:
 		description = "Web Shell - file list.asp"
 		author = "Florian Roth"
@@ -1507,7 +1546,7 @@ rule webshell_asp_list {
 	condition:
 		all of them
 }
-rule webshell_PHP_co {
+rule Hacktool_webshell_PHP_co {
 	meta:
 		description = "Web Shell - file co.php"
 		author = "Florian Roth"
@@ -1520,7 +1559,7 @@ rule webshell_PHP_co {
 	condition:
 		all of them
 }
-rule webshell_PHP_150 {
+rule Hacktool_webshell_PHP_150 {
 	meta:
 		description = "Web Shell - file 150.php"
 		author = "Florian Roth"
@@ -1533,7 +1572,7 @@ rule webshell_PHP_150 {
 	condition:
 		all of them
 }
-rule webshell_jsp_cmdjsp_2 {
+rule Hacktool_webshell_jsp_cmdjsp_2 {
 	meta:
 		description = "Web Shell - file cmdjsp.jsp"
 		author = "Florian Roth"
@@ -1546,7 +1585,7 @@ rule webshell_jsp_cmdjsp_2 {
 	condition:
 		all of them
 }
-rule webshell_PHP_c37 {
+rule Hacktool_webshell_PHP_c37 {
 	meta:
 		description = "Web Shell - file c37.php"
 		author = "Florian Roth"
@@ -1559,7 +1598,7 @@ rule webshell_PHP_c37 {
 	condition:
 		all of them
 }
-rule webshell_PHP_b37 {
+rule Hacktool_webshell_PHP_b37 {
 	meta:
 		description = "Web Shell - file b37.php"
 		author = "Florian Roth"
@@ -1571,7 +1610,7 @@ rule webshell_PHP_b37 {
 	condition:
 		all of them
 }
-rule webshell_php_backdoor {
+rule Hacktool_webshell_php_backdoor {
 	meta:
 		description = "Web Shell - file php-backdoor.php"
 		author = "Florian Roth"
@@ -1584,7 +1623,7 @@ rule webshell_php_backdoor {
 	condition:
 		all of them
 }
-rule webshell_asp_dabao {
+rule Hacktool_webshell_asp_dabao {
 	meta:
 		description = "Web Shell - file dabao.asp"
 		author = "Florian Roth"
@@ -1597,7 +1636,7 @@ rule webshell_asp_dabao {
 	condition:
 		all of them
 }
-rule webshell_php_2 {
+rule Hacktool_webshell_php_2 {
 	meta:
 		description = "Web Shell - file 2.php"
 		author = "Florian Roth"
@@ -1609,7 +1648,7 @@ rule webshell_php_2 {
 	condition:
 		all of them
 }
-rule webshell_asp_cmdasp {
+rule Hacktool_webshell_asp_cmdasp {
 	meta:
 		description = "Web Shell - file cmdasp.asp"
 		author = "Florian Roth"
@@ -1622,7 +1661,7 @@ rule webshell_asp_cmdasp {
 	condition:
 		all of them
 }
-rule webshell_spjspshell {
+rule Hacktool_webshell_spjspshell {
 	meta:
 		description = "Web Shell - file spjspshell.jsp"
 		author = "Florian Roth"
@@ -1634,7 +1673,7 @@ rule webshell_spjspshell {
 	condition:
 		all of them
 }
-rule webshell_jsp_action {
+rule Hacktool_webshell_jsp_action {
 	meta:
 		description = "Web Shell - file action.jsp"
 		author = "Florian Roth"
@@ -1647,7 +1686,7 @@ rule webshell_jsp_action {
 	condition:
 		all of them
 }
-rule webshell_Inderxer {
+rule Hacktool_webshell_Inderxer {
 	meta:
 		description = "Web Shell - file Inderxer.asp"
 		author = "Florian Roth"
@@ -1659,7 +1698,7 @@ rule webshell_Inderxer {
 	condition:
 		all of them
 }
-rule webshell_asp_Rader {
+rule Hacktool_webshell_asp_Rader {
 	meta:
 		description = "Web Shell - file Rader.asp"
 		author = "Florian Roth"
@@ -1672,7 +1711,7 @@ rule webshell_asp_Rader {
 	condition:
 		all of them
 }
-rule webshell_c99_madnet_smowu {
+rule Hacktool_webshell_c99_madnet_smowu {
 	meta:
 		description = "Web Shell - file smowu.php"
 		author = "Florian Roth"
@@ -1689,7 +1728,7 @@ rule webshell_c99_madnet_smowu {
 	condition:
 		all of them
 }
-rule webshell_php_moon {
+rule Hacktool_webshell_php_moon {
 	meta:
 		description = "Web Shell - file moon.php"
 		author = "Florian Roth"
@@ -1703,7 +1742,7 @@ rule webshell_php_moon {
 	condition:
 		2 of them
 }
-rule webshell_jsp_jdbc {
+rule Hacktool_webshell_jsp_jdbc {
 	meta:
 		description = "Web Shell - file jdbc.jsp"
 		author = "Florian Roth"
@@ -1715,7 +1754,7 @@ rule webshell_jsp_jdbc {
 	condition:
 		all of them
 }
-rule webshell_minupload {
+rule Hacktool_webshell_minupload {
 	meta:
 		description = "Web Shell - file minupload.jsp"
 		author = "Florian Roth"
@@ -1728,7 +1767,7 @@ rule webshell_minupload {
 	condition:
 		all of them
 }
-rule webshell_ELMALISEKER_Backd00r {
+rule Hacktool_webshell_ELMALISEKER_Backd00r {
 	meta:
 		description = "Web Shell - file ELMALISEKER Backd00r.asp"
 		author = "Florian Roth"
@@ -1741,7 +1780,7 @@ rule webshell_ELMALISEKER_Backd00r {
 	condition:
 		all of them
 }
-rule webshell_PHP_bug_1_ {
+rule Hacktool_webshell_PHP_bug_1_ {
 	meta:
 		description = "Web Shell - file bug (1).php"
 		author = "Florian Roth"
@@ -1753,7 +1792,7 @@ rule webshell_PHP_bug_1_ {
 	condition:
 		all of them
 }
-rule webshell_caidao_shell_hkmjj {
+rule Hacktool_webshell_caidao_shell_hkmjj {
 	meta:
 		description = "Web Shell - file hkmjj.asp"
 		author = "Florian Roth"
@@ -1765,7 +1804,7 @@ rule webshell_caidao_shell_hkmjj {
 	condition:
 		all of them
 }
-rule webshell_jsp_asd {
+rule Hacktool_webshell_jsp_asd {
 	meta:
 		description = "Web Shell - file asd.jsp"
 		author = "Florian Roth"
@@ -1778,7 +1817,7 @@ rule webshell_jsp_asd {
 	condition:
 		all of them
 }
-rule webshell_jsp_inback3 {
+rule Hacktool_webshell_jsp_inback3 {
 	meta:
 		description = "Web Shell - file inback3.jsp"
 		author = "Florian Roth"
@@ -1790,7 +1829,7 @@ rule webshell_jsp_inback3 {
 	condition:
 		all of them
 }
-rule webshell_metaslsoft {
+rule Hacktool_webshell_metaslsoft {
 	meta:
 		description = "Web Shell - file metaslsoft.php"
 		author = "Florian Roth"
@@ -1802,7 +1841,7 @@ rule webshell_metaslsoft {
 	condition:
 		all of them
 }
-rule webshell_asp_Ajan {
+rule Hacktool_webshell_asp_Ajan {
 	meta:
 		description = "Web Shell - file Ajan.asp"
 		author = "Florian Roth"
@@ -1814,13 +1853,12 @@ rule webshell_asp_Ajan {
 	condition:
 		all of them
 }
-rule webshell_config_myxx_zend {
+rule Hacktool_webshell_config_myxx_zend {
 	meta:
 		description = "Web Shell - from files config.jsp, myxx.jsp, zend.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "d44df8b1543b837e57cc8f25a0a68d92"
 		hash1 = "e0354099bee243702eb11df8d0e046df"
 		hash2 = "591ca89a25f06cf01e4345f98a22845c"
@@ -1829,13 +1867,12 @@ rule webshell_config_myxx_zend {
 	condition:
 		all of them
 }
-rule webshell_browser_201_3_ma_download {
+rule Hacktool_webshell_browser_201_3_ma_download {
 	meta:
 		description = "Web Shell - from files browser.jsp, 201.jsp, 3.jsp, ma.jsp, download.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "37603e44ee6dc1c359feb68a0d566f76"
 		hash1 = "a7e25b8ac605753ed0c438db93f6c498"
 		hash2 = "fb8c6c3a69b93e5e7193036fd31a958d"
@@ -1847,13 +1884,12 @@ rule webshell_browser_201_3_ma_download {
 	condition:
 		all of them
 }
-rule webshell_itsec_itsecteam_shell_jHn {
+rule Hacktool_webshell_itsec_itsecteam_shell_jHn {
 	meta:
 		description = "Web Shell - from files itsec.php, itsecteam_shell.php, jHn.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "8ae9d2b50dc382f0571cd7492f079836"
 		hash1 = "bd6d3b2763c705a01cc2b3f105a25fa4"
 		hash2 = "40c6ecf77253e805ace85f119fe1cebb"
@@ -1863,13 +1899,12 @@ rule webshell_itsec_itsecteam_shell_jHn {
 	condition:
 		all of them
 }
-rule webshell_ghost_source_icesword_silic {
+rule Hacktool_webshell_ghost_source_icesword_silic {
 	meta:
 		description = "Web Shell - from files ghost_source.php, icesword.php, silic.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "cbf64a56306c1b5d98898468fc1fdbd8"
 		hash1 = "6e20b41c040efb453d57780025a292ae"
 		hash2 = "437d30c94f8eef92dc2f064de4998695"
@@ -1879,13 +1914,12 @@ rule webshell_ghost_source_icesword_silic {
 	condition:
 		all of them
 }
-rule webshell_JspSpy_JspSpyJDK5_JspSpyJDK51_luci_jsp_spy2009_m_ma3_xxx {
+rule Hacktool_webshell_JspSpy_JspSpyJDK5_JspSpyJDK51_luci_jsp_spy2009_m_ma3_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 000.jsp, 403.jsp, 807.jsp, a.jsp, c5.jsp, css.jsp, dm.jsp, he1p.jsp, JspSpy.jsp, JspSpyJDK5.jsp, JspSpyJDK51.jsp, luci.jsp.spy2009.jsp, m.jsp, ma3.jsp, mmym520.jsp, nogfw.jsp, ok.jsp, queryDong.jsp, spyjsp2010.jsp, style.jsp, t00ls.jsp, u.jsp, xia.jsp, cofigrue.jsp, 1.jsp, jspspy.jsp, jspspy_k8.jsp, JspSpy.jsp, JspSpyJDK5.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "ae76c77fb7a234380cd0ebb6fe1bcddf"
@@ -1921,13 +1955,12 @@ rule webshell_JspSpy_JspSpyJDK5_JspSpyJDK51_luci_jsp_spy2009_m_ma3_xxx {
 	condition:
 		all of them
 }
-rule webshell_2_520_job_ma1_ma4_2 {
+rule Hacktool_webshell_2_520_job_ma1_ma4_2 {
 	meta:
 		description = "Web Shell - from files 2.jsp, 520.jsp, job.jsp, ma1.jsp, ma4.jsp, 2.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "64a3bf9142b045b9062b204db39d4d57"
 		hash1 = "9abd397c6498c41967b4dd327cf8b55a"
 		hash2 = "56c005690da2558690c4aa305a31ad37"
@@ -1940,13 +1973,12 @@ rule webshell_2_520_job_ma1_ma4_2 {
 	condition:
 		all of them
 }
-rule webshell_000_403_807_a_c5_config_css_dm_he1p_JspSpy_JspSpyJDK5_JspSpyJDK51_luci_jsp_xxx {
+rule Hacktool_webshell_000_403_807_a_c5_config_css_dm_he1p_JspSpy_JspSpyJDK5_JspSpyJDK51_luci_jsp_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 000.jsp, 403.jsp, 807.jsp, a.jsp, c5.jsp, config.jsp, css.jsp, dm.jsp, he1p.jsp, JspSpy.jsp, JspSpyJDK5.jsp, JspSpyJDK51.jsp, luci.jsp.spy2009.jsp, m.jsp, ma3.jsp, mmym520.jsp, myxx.jsp, nogfw.jsp, ok.jsp, queryDong.jsp, spyjsp2010.jsp, style.jsp, t00ls.jsp, u.jsp, xia.jsp, zend.jsp, cofigrue.jsp, 1.jsp, jspspy.jsp, jspspy_k8.jsp, JspSpy.jsp, JspSpyJDK5.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "ae76c77fb7a234380cd0ebb6fe1bcddf"
@@ -1985,13 +2017,14 @@ rule webshell_000_403_807_a_c5_config_css_dm_he1p_JspSpy_JspSpyJDK5_JspSpyJDK51_
 	condition:
 		all of them
 }
-rule webshell_wso2_5_1_wso2_5_wso2 {
+rule Hacktool_webshell_wso2_5_1_wso2_5_wso2 {
 	meta:
 		description = "Web Shell - from files wso2.5.1.php, wso2.5.php, wso2.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "dbeecd555a2ef80615f0894027ad75dc"
 		hash1 = "7c8e5d31aad28eb1f0a9a53145551e05"
 		hash2 = "cbc44fb78220958f81b739b493024688"
@@ -2001,13 +2034,14 @@ rule webshell_wso2_5_1_wso2_5_wso2 {
 	condition:
 		all of them
 }
-rule webshell_000_403_c5_queryDong_spyjsp2010_t00ls {
+rule Hacktool_webshell_000_403_c5_queryDong_spyjsp2010_t00ls {
 	meta:
 		description = "Web Shell - from files 000.jsp, 403.jsp, c5.jsp, queryDong.jsp, spyjsp2010.jsp, t00ls.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "8b457934da3821ba58b06a113e0d53d9"
@@ -2020,13 +2054,14 @@ rule webshell_000_403_c5_queryDong_spyjsp2010_t00ls {
 	condition:
 		all of them
 }
-rule webshell_404_data_suiyue {
+rule Hacktool_webshell_404_data_suiyue {
 	meta:
 		description = "Web Shell - from files 404.jsp, data.jsp, suiyue.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "7066f4469c3ec20f4890535b5f299122"
 		hash1 = "9f54aa7b43797be9bab7d094f238b4ff"
 		hash2 = "c93d5bdf5cf62fe22e299d0f2b865ea7"
@@ -2035,13 +2070,14 @@ rule webshell_404_data_suiyue {
 	condition:
 		all of them
 }
-rule webshell_r57shell_r57shell127_SnIpEr_SA_Shell_EgY_SpIdEr_ShElL_V2_r57_xxx {
+rule Hacktool_webshell_r57shell_r57shell127_SnIpEr_SA_Shell_EgY_SpIdEr_ShElL_V2_r57_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files r57shell.php, r57shell127.php, SnIpEr_SA Shell.php, EgY_SpIdEr ShElL V2.php, r57_iFX.php, r57_kartal.php, r57_Mohajer22.php, r57.php, r57.php, Backdoor.PHP.Agent.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "ef43fef943e9df90ddb6257950b3538f"
 		hash1 = "ae025c886fbe7f9ed159f49593674832"
 		hash2 = "911195a9b7c010f61b66439d9048f400"
@@ -2059,13 +2095,14 @@ rule webshell_r57shell_r57shell127_SnIpEr_SA_Shell_EgY_SpIdEr_ShElL_V2_r57_xxx {
 	condition:
 		all of them
 }
-rule webshell_807_a_css_dm_he1p_JspSpy_xxx {
+rule Hacktool_webshell_807_a_css_dm_he1p_JspSpy_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 807.jsp, a.jsp, css.jsp, dm.jsp, he1p.jsp, JspSpy.jsp, JspSpyJDK5.jsp, JspSpyJDK51.jsp, luci.jsp.spy2009.jsp, m.jsp, ma3.jsp, mmym520.jsp, nogfw.jsp, ok.jsp, style.jsp, u.jsp, xia.jsp, cofigrue.jsp, 1.jsp, jspspy.jsp, jspspy_k8.jsp, JspSpy.jsp, JspSpyJDK5.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "ae76c77fb7a234380cd0ebb6fe1bcddf"
 		hash1 = "76037ebd781ad0eac363d56fc81f4b4f"
 		hash2 = "fc44f6b4387a2cb50e1a63c66a8cb81c"
@@ -2096,13 +2133,14 @@ rule webshell_807_a_css_dm_he1p_JspSpy_xxx {
 	condition:
 		all of them
 }
-rule webshell_201_3_ma_download {
+rule Hacktool_webshell_201_3_ma_download {
 	meta:
 		description = "Web Shell - from files 201.jsp, 3.jsp, ma.jsp, download.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "a7e25b8ac605753ed0c438db93f6c498"
 		hash1 = "fb8c6c3a69b93e5e7193036fd31a958d"
 		hash2 = "4cc68fa572e88b669bce606c7ace0ae9"
@@ -2114,13 +2152,14 @@ rule webshell_201_3_ma_download {
 	condition:
 		all of them
 }
-rule webshell_browser_201_3_400_in_JFolder_jfolder01_jsp_leo_ma_warn_webshell_nc_download {
+rule Hacktool_webshell_browser_201_3_400_in_JFolder_jfolder01_jsp_leo_ma_warn_webshell_nc_download {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files browser.jsp, 201.jsp, 3.jsp, 400.jsp, in.jsp, JFolder.jsp, jfolder01.jsp, jsp.jsp, leo.jsp, ma.jsp, warn.jsp, webshell-nc.jsp, download.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "37603e44ee6dc1c359feb68a0d566f76"
 		hash1 = "a7e25b8ac605753ed0c438db93f6c498"
 		hash2 = "fb8c6c3a69b93e5e7193036fd31a958d"
@@ -2140,13 +2179,14 @@ rule webshell_browser_201_3_400_in_JFolder_jfolder01_jsp_leo_ma_warn_webshell_nc
 	condition:
 		all of them
 }
-rule webshell_shell_phpspy_2006_arabicspy {
+rule Hacktool_webshell_shell_phpspy_2006_arabicspy {
 	meta:
 		description = "Web Shell - from files shell.php, phpspy_2006.php, arabicspy.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "791708057d8b429d91357d38edf43cc0"
 		hash1 = "40a1f840111996ff7200d18968e42cfe"
 		hash2 = "e0202adff532b28ef1ba206cf95962f2"
@@ -2156,13 +2196,14 @@ rule webshell_shell_phpspy_2006_arabicspy {
 	condition:
 		all of them
 }
-rule webshell_in_JFolder_jfolder01_jsp_leo_warn {
+rule Hacktool_webshell_in_JFolder_jfolder01_jsp_leo_warn {
 	meta:
 		description = "Web Shell - from files in.jsp, JFolder.jsp, jfolder01.jsp, jsp.jsp, leo.jsp, warn.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "793b3d0a740dbf355df3e6f68b8217a4"
 		hash1 = "8979594423b68489024447474d113894"
 		hash2 = "ec482fc969d182e5440521c913bab9bd"
@@ -2175,13 +2216,14 @@ rule webshell_in_JFolder_jfolder01_jsp_leo_warn {
 	condition:
 		all of them
 }
-rule webshell_2_520_icesword_job_ma1_ma4_2 {
+rule Hacktool_webshell_2_520_icesword_job_ma1_ma4_2 {
 	meta:
 		description = "Web Shell - from files 2.jsp, 520.jsp, icesword.jsp, job.jsp, ma1.jsp, ma4.jsp, 2.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "64a3bf9142b045b9062b204db39d4d57"
 		hash1 = "9abd397c6498c41967b4dd327cf8b55a"
 		hash2 = "077f4b1b6d705d223b6d644a4f3eebae"
@@ -2196,13 +2238,14 @@ rule webshell_2_520_icesword_job_ma1_ma4_2 {
 	condition:
 		all of them
 }
-rule webshell_phpspy_2005_full_phpspy_2005_lite_PHPSPY {
+rule Hacktool_webshell_phpspy_2005_full_phpspy_2005_lite_PHPSPY {
 	meta:
 		description = "Web Shell - from files phpspy_2005_full.php, phpspy_2005_lite.php, PHPSPY.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "b68bfafc6059fd26732fa07fb6f7f640"
 		hash1 = "42f211cec8032eb0881e87ebdb3d7224"
 		hash2 = "0712e3dc262b4e1f98ed25760b206836"
@@ -2213,13 +2256,14 @@ rule webshell_phpspy_2005_full_phpspy_2005_lite_PHPSPY {
 	condition:
 		2 of them
 }
-rule webshell_shell_phpspy_2006_arabicspy_hkrkoz {
+rule Hacktool_webshell_shell_phpspy_2006_arabicspy_hkrkoz {
 	meta:
 		description = "Web Shell - from files shell.php, phpspy_2006.php, arabicspy.php, hkrkoz.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "791708057d8b429d91357d38edf43cc0"
 		hash1 = "40a1f840111996ff7200d18968e42cfe"
 		hash2 = "e0202adff532b28ef1ba206cf95962f2"
@@ -2229,13 +2273,14 @@ rule webshell_shell_phpspy_2006_arabicspy_hkrkoz {
 	condition:
 		all of them
 }
-rule webshell_c99_Shell_ci_Biz_was_here_c100_v_xxx {
+rule Hacktool_webshell_c99_Shell_ci_Biz_was_here_c100_v_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files c99.php, Shell [ci] .Biz was here.php, c100 v. 777shell v. Undetectable #18a Modded by 777 - Don.php, c66.php, c99-shadows-mod.php, c99shell.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "61a92ce63369e2fa4919ef0ff7c51167"
 		hash1 = "f2fa878de03732fbf5c86d656467ff50"
 		hash2 = "27786d1e0b1046a1a7f67ee41c64bf4c"
@@ -2247,13 +2292,14 @@ rule webshell_c99_Shell_ci_Biz_was_here_c100_v_xxx {
 	condition:
 		all of them
 }
-rule webshell_2008_2009lite_2009mssql {
+rule Hacktool_webshell_2008_2009lite_2009mssql {
 	meta:
 		description = "Web Shell - from files 2008.php, 2009lite.php, 2009mssql.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "3e4ba470d4c38765e4b16ed930facf2c"
 		hash1 = "3f4d454d27ecc0013e783ed921eeecde"
 		hash2 = "aa17b71bb93c6789911bd1c9df834ff9"
@@ -2263,13 +2309,14 @@ rule webshell_2008_2009lite_2009mssql {
 	condition:
 		all of them
 }
-rule webshell_shell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_arabicspy_PHPSPY_hkrkoz {
+rule Hacktool_webshell_shell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_arabicspy_PHPSPY_hkrkoz {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files shell.php, phpspy_2005_full.php, phpspy_2005_lite.php, phpspy_2006.php, arabicspy.php, PHPSPY.php, hkrkoz.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "791708057d8b429d91357d38edf43cc0"
 		hash1 = "b68bfafc6059fd26732fa07fb6f7f640"
 		hash2 = "42f211cec8032eb0881e87ebdb3d7224"
@@ -2283,13 +2330,14 @@ rule webshell_shell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_arabicspy_PHPS
 	condition:
 		all of them
 }
-rule webshell_807_dm_JspSpyJDK5_m_cofigrue {
+rule Hacktool_webshell_807_dm_JspSpyJDK5_m_cofigrue {
 	meta:
 		description = "Web Shell - from files 807.jsp, dm.jsp, JspSpyJDK5.jsp, m.jsp, cofigrue.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "ae76c77fb7a234380cd0ebb6fe1bcddf"
 		hash1 = "14e9688c86b454ed48171a9d4f48ace8"
 		hash2 = "341298482cf90febebb8616426080d1d"
@@ -2301,13 +2349,14 @@ rule webshell_807_dm_JspSpyJDK5_m_cofigrue {
 	condition:
 		1 of them
 }
-rule webshell_Dive_Shell_1_0_Emperor_Hacking_Team_xxx {
+rule Hacktool_webshell_Dive_Shell_1_0_Emperor_Hacking_Team_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files Dive Shell 1.0 - Emperor Hacking Team.php, phpshell.php, SimShell 1.0 - Simorgh Security MGZ.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "1b5102bdc41a7bc439eea8f0010310a5"
 		hash1 = "f8a6d5306fb37414c5c772315a27832f"
 		hash2 = "37cb1db26b1b0161a4bf678a6b4565bd"
@@ -2317,13 +2366,14 @@ rule webshell_Dive_Shell_1_0_Emperor_Hacking_Team_xxx {
 	condition:
 		all of them
 }
-rule webshell_404_data_in_JFolder_jfolder01_xxx {
+rule Hacktool_webshell_404_data_in_JFolder_jfolder01_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 404.jsp, data.jsp, in.jsp, JFolder.jsp, jfolder01.jsp, jsp.jsp, leo.jsp, suiyue.jsp, warn.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "7066f4469c3ec20f4890535b5f299122"
 		hash1 = "9f54aa7b43797be9bab7d094f238b4ff"
 		hash2 = "793b3d0a740dbf355df3e6f68b8217a4"
@@ -2338,12 +2388,13 @@ rule webshell_404_data_in_JFolder_jfolder01_xxx {
 	condition:
 		all of them
 }
-rule webshell_jsp_reverse_jsp_reverse_jspbd {
+rule Hacktool_webshell_jsp_reverse_jsp_reverse_jspbd {
 	meta:
 		description = "Web Shell - from files jsp-reverse.jsp, jsp-reverse.jsp, jspbd.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
-		super_rule = 1
+		
+		
 		hash0 = "8b0e6779f25a17f0ffb3df14122ba594"
 		hash1 = "ea87f0c1f0535610becadf5a98aca2fc"
 		hash2 = "7d5e9732766cf5b8edca9b7ae2b6028f"
@@ -2355,13 +2406,14 @@ rule webshell_jsp_reverse_jsp_reverse_jspbd {
 	condition:
 		all of them
 }
-rule webshell_400_in_JFolder_jfolder01_jsp_leo_warn_webshell_nc {
+rule Hacktool_webshell_400_in_JFolder_jfolder01_jsp_leo_warn_webshell_nc {
 	meta:
 		description = "Web Shell - from files 400.jsp, in.jsp, JFolder.jsp, jfolder01.jsp, jsp.jsp, leo.jsp, warn.jsp, webshell-nc.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "36331f2c81bad763528d0ae00edf55be"
 		hash1 = "793b3d0a740dbf355df3e6f68b8217a4"
 		hash2 = "8979594423b68489024447474d113894"
@@ -2378,13 +2430,14 @@ rule webshell_400_in_JFolder_jfolder01_jsp_leo_warn_webshell_nc {
 	condition:
 		2 of them
 }
-rule webshell_2_520_job_JspWebshell_1_2_ma1_ma4_2 {
+rule Hacktool_webshell_2_520_job_JspWebshell_1_2_ma1_ma4_2 {
 	meta:
 		description = "Web Shell - from files 2.jsp, 520.jsp, job.jsp, JspWebshell 1.2.jsp, ma1.jsp, ma4.jsp, 2.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "64a3bf9142b045b9062b204db39d4d57"
 		hash1 = "9abd397c6498c41967b4dd327cf8b55a"
 		hash2 = "56c005690da2558690c4aa305a31ad37"
@@ -2399,13 +2452,14 @@ rule webshell_2_520_job_JspWebshell_1_2_ma1_ma4_2 {
 	condition:
 		2 of them
 }
-rule webshell_shell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz {
+rule Hacktool_webshell_shell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files shell.php, 2008.php, 2009mssql.php, phpspy_2005_full.php, phpspy_2006.php, arabicspy.php, hkrkoz.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 60
-		super_rule = 1
+		
+		
 		hash0 = "791708057d8b429d91357d38edf43cc0"
 		hash1 = "3e4ba470d4c38765e4b16ed930facf2c"
 		hash2 = "aa17b71bb93c6789911bd1c9df834ff9"
@@ -2422,13 +2476,14 @@ rule webshell_shell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz
 	condition:
 		2 of ($s*) and not $fn
 }
-rule webshell_gfs_sh_r57shell_r57shell127_SnIpEr_SA_xxx {
+rule Hacktool_webshell_gfs_sh_r57shell_r57shell127_SnIpEr_SA_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files gfs_sh.php, r57shell.php, r57shell127.php, SnIpEr_SA Shell.php, EgY_SpIdEr ShElL V2.php, r57_iFX.php, r57_kartal.php, r57_Mohajer22.php, r57.php, r57.php, Backdoor.PHP.Agent.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "a2516ac6ee41a7cf931cbaef1134a9e4"
 		hash1 = "ef43fef943e9df90ddb6257950b3538f"
 		hash2 = "ae025c886fbe7f9ed159f49593674832"
@@ -2446,13 +2501,14 @@ rule webshell_gfs_sh_r57shell_r57shell127_SnIpEr_SA_xxx {
 	condition:
 		all of them
 }
-rule webshell_itsec_PHPJackal_itsecteam_shell_jHn {
+rule Hacktool_webshell_itsec_PHPJackal_itsecteam_shell_jHn {
 	meta:
 		description = "Web Shell - from files itsec.php, PHPJackal.php, itsecteam_shell.php, jHn.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "8ae9d2b50dc382f0571cd7492f079836"
 		hash1 = "e2830d3286001d1455479849aacbbb38"
 		hash2 = "bd6d3b2763c705a01cc2b3f105a25fa4"
@@ -2464,13 +2520,14 @@ rule webshell_itsec_PHPJackal_itsecteam_shell_jHn {
 	condition:
 		2 of them
 }
-rule webshell_Shell_ci_Biz_was_here_c100_v_xxx {
+rule Hacktool_webshell_Shell_ci_Biz_was_here_c100_v_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files Shell [ci] .Biz was here.php, c100 v. 777shell v. Undetectable #18a Modded by 777 - Don.php, c99-shadows-mod.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "f2fa878de03732fbf5c86d656467ff50"
 		hash1 = "27786d1e0b1046a1a7f67ee41c64bf4c"
 		hash2 = "68c0629d08b1664f5bcce7d7f5f71d22"
@@ -2483,13 +2540,14 @@ rule webshell_Shell_ci_Biz_was_here_c100_v_xxx {
 	condition:
 		2 of them
 }
-rule webshell_NIX_REMOTE_WEB_SHELL_NIX_REMOTE_WEB_xxx1 {
+rule Hacktool_webshell_NIX_REMOTE_WEB_SHELL_NIX_REMOTE_WEB_xxx1 {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files NIX REMOTE WEB-SHELL.php, NIX REMOTE WEB-SHELL v.0.5 alpha Lite Public Version.php, KAdot Universal Shell v0.1.6.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "0b19e9de790cd2f4325f8c24b22af540"
 		hash1 = "f3ca29b7999643507081caab926e2e74"
 		hash2 = "527cf81f9272919bf872007e21c4bdda"
@@ -2501,13 +2559,14 @@ rule webshell_NIX_REMOTE_WEB_SHELL_NIX_REMOTE_WEB_xxx1 {
 	condition:
 		2 of them
 }
-rule webshell_c99_c99shell_c99_w4cking_Shell_xxx {
+rule Hacktool_webshell_c99_c99shell_c99_w4cking_Shell_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files c99.php, c99shell.php, c99_w4cking.php, Shell [ci] .Biz was here.php, acid.php, c100 v. 777shell v. Undetectable #18a Modded by 777 - Don.php, c66.php, c99-shadows-mod.php, c99.php, c99shell.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "61a92ce63369e2fa4919ef0ff7c51167"
 		hash1 = "d3f38a6dc54a73d304932d9227a739ec"
 		hash2 = "9c34adbc8fd8d908cbb341734830f971"
@@ -2528,13 +2587,14 @@ rule webshell_c99_c99shell_c99_w4cking_Shell_xxx {
 	condition:
 		2 of them
 }
-rule webshell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz {
+rule Hacktool_webshell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 2008.php, 2009mssql.php, phpspy_2005_full.php, phpspy_2006.php, arabicspy.php, hkrkoz.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "3e4ba470d4c38765e4b16ed930facf2c"
 		hash1 = "aa17b71bb93c6789911bd1c9df834ff9"
 		hash2 = "b68bfafc6059fd26732fa07fb6f7f640"
@@ -2549,13 +2609,14 @@ rule webshell_2008_2009mssql_phpspy_2005_full_phpspy_2006_arabicspy_hkrkoz {
 	condition:
 		all of them
 }
-rule webshell_c99_c66_c99_shadows_mod_c99shell {
+rule Hacktool_webshell_c99_c66_c99_shadows_mod_c99shell {
 	meta:
 		description = "Web Shell - from files c99.php, c66.php, c99-shadows-mod.php, c99shell.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "61a92ce63369e2fa4919ef0ff7c51167"
 		hash1 = "0f5b9238d281bc6ac13406bb24ac2a5b"
 		hash2 = "68c0629d08b1664f5bcce7d7f5f71d22"
@@ -2570,13 +2631,14 @@ rule webshell_c99_c66_c99_shadows_mod_c99shell {
 	condition:
 		2 of them
 }
-rule webshell_he1p_JspSpy_nogfw_ok_style_1_JspSpy1 {
+rule Hacktool_webshell_he1p_JspSpy_nogfw_ok_style_1_JspSpy1 {
 	meta:
 		description = "Web Shell - from files he1p.jsp, JspSpy.jsp, nogfw.jsp, ok.jsp, style.jsp, 1.jsp, JspSpy.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "b330a6c2d49124ef0729539761d6ef0b"
 		hash1 = "d71716df5042880ef84427acee8b121e"
 		hash2 = "344f9073576a066142b2023629539ebd"
@@ -2592,13 +2654,14 @@ rule webshell_he1p_JspSpy_nogfw_ok_style_1_JspSpy1 {
 	condition:
 		2 of them
 }
-rule webshell_000_403_c5_config_myxx_queryDong_spyjsp2010_zend {
+rule Hacktool_webshell_000_403_c5_config_myxx_queryDong_spyjsp2010_zend {
 	meta:
 		description = "Web Shell - from files 000.jsp, 403.jsp, c5.jsp, config.jsp, myxx.jsp, queryDong.jsp, spyjsp2010.jsp, zend.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "8b457934da3821ba58b06a113e0d53d9"
@@ -2614,13 +2677,14 @@ rule webshell_000_403_c5_config_myxx_queryDong_spyjsp2010_zend {
 	condition:
 		2 of them
 }
-rule webshell_c99_c99shell_c99_c99shell {
+rule Hacktool_webshell_c99_c99shell_c99_c99shell {
 	meta:
 		description = "Web Shell - from files c99.php, c99shell.php, c99.php, c99shell.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "61a92ce63369e2fa4919ef0ff7c51167"
 		hash1 = "d3f38a6dc54a73d304932d9227a739ec"
 		hash2 = "157b4ac3c7ba3a36e546e81e9279eab5"
@@ -2631,13 +2695,14 @@ rule webshell_c99_c99shell_c99_c99shell {
 	condition:
 		1 of them
 }
-rule webshell_r57shell127_r57_iFX_r57_kartal_r57_antichat {
+rule Hacktool_webshell_r57shell127_r57_iFX_r57_kartal_r57_antichat {
 	meta:
 		description = "Web Shell - from files r57shell127.php, r57_iFX.php, r57_kartal.php, r57.php, antichat.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "ae025c886fbe7f9ed159f49593674832"
 		hash1 = "513b7be8bd0595c377283a7c87b44b2e"
 		hash2 = "1d912c55b96e2efe8ca873d6040e3b30"
@@ -2651,13 +2716,14 @@ rule webshell_r57shell127_r57_iFX_r57_kartal_r57_antichat {
 	condition:
 		2 of them
 }
-rule webshell_NIX_REMOTE_WEB_SHELL_nstview_xxx {
+rule Hacktool_webshell_NIX_REMOTE_WEB_SHELL_nstview_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files NIX REMOTE WEB-SHELL.php, nstview.php, NIX REMOTE WEB-SHELL v.0.5 alpha Lite Public Version.php, Cyber Shell (v 1.0).php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "0b19e9de790cd2f4325f8c24b22af540"
 		hash1 = "4745d510fed4378e4b1730f56f25e569"
 		hash2 = "f3ca29b7999643507081caab926e2e74"
@@ -2669,13 +2735,14 @@ rule webshell_NIX_REMOTE_WEB_SHELL_nstview_xxx {
 	condition:
 		2 of them
 }
-rule webshell_000_403_807_a_c5_config_css_dm_he1p_xxx {
+rule Hacktool_webshell_000_403_807_a_c5_config_css_dm_he1p_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files 000.jsp, 403.jsp, 807.jsp, a.jsp, c5.jsp, config.jsp, css.jsp, dm.jsp, he1p.jsp, JspSpy.jsp, JspSpyJDK5.jsp, JspSpyJDK51.jsp, luci.jsp.spy2009.jsp, m.jsp, ma3.jsp, mmym520.jsp, myxx.jsp, nogfw.jsp, ok.jsp, queryDong.jsp, spyjsp2010.jsp, style.jsp, u.jsp, xia.jsp, zend.jsp, cofigrue.jsp, 1.jsp, jspspy.jsp, jspspy_k8.jsp, JspSpy.jsp, JspSpyJDK5.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "ae76c77fb7a234380cd0ebb6fe1bcddf"
@@ -2718,13 +2785,14 @@ rule webshell_000_403_807_a_c5_config_css_dm_he1p_xxx {
 	condition:
 		4 of them
 }
-rule webshell_2_520_icesword_job_ma1 {
+rule Hacktool_webshell_2_520_icesword_job_ma1 {
 	meta:
 		description = "Web Shell - from files 2.jsp, 520.jsp, icesword.jsp, job.jsp, ma1.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "64a3bf9142b045b9062b204db39d4d57"
 		hash1 = "9abd397c6498c41967b4dd327cf8b55a"
 		hash2 = "077f4b1b6d705d223b6d644a4f3eebae"
@@ -2737,13 +2805,14 @@ rule webshell_2_520_icesword_job_ma1 {
 	condition:
 		2 of them
 }
-rule webshell_404_data_in_JFolder_jfolder01_jsp_suiyue_warn {
+rule Hacktool_webshell_404_data_in_JFolder_jfolder01_jsp_suiyue_warn {
 	meta:
 		description = "Web Shell - from files 404.jsp, data.jsp, in.jsp, JFolder.jsp, jfolder01.jsp, jsp.jsp, suiyue.jsp, warn.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "7066f4469c3ec20f4890535b5f299122"
 		hash1 = "9f54aa7b43797be9bab7d094f238b4ff"
 		hash2 = "793b3d0a740dbf355df3e6f68b8217a4"
@@ -2761,13 +2830,14 @@ rule webshell_404_data_in_JFolder_jfolder01_jsp_suiyue_warn {
 		all of them
 }
 
-rule webshell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_PHPSPY {
+rule Hacktool_webshell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_PHPSPY {
 	meta:
 		description = "Web Shell - from files phpspy_2005_full.php, phpspy_2005_lite.php, phpspy_2006.php, PHPSPY.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "b68bfafc6059fd26732fa07fb6f7f640"
 		hash1 = "42f211cec8032eb0881e87ebdb3d7224"
 		hash2 = "40a1f840111996ff7200d18968e42cfe"
@@ -2780,13 +2850,14 @@ rule webshell_phpspy_2005_full_phpspy_2005_lite_phpspy_2006_PHPSPY {
 	condition:
 		2 of them
 }
-rule webshell_c99_locus7s_c99_w4cking_xxx {
+rule Hacktool_webshell_c99_locus7s_c99_w4cking_xxx {
 	meta:
-		description = "Web Shell"
+		description = "Web Shell - from files c99_locus7s.php, c99_w4cking.php, r57shell.php, r57shell127.php, SnIpEr_SA Shell.php, EgY_SpIdEr ShElL V2.php, r57_iFX.php, r57_kartal.php, r57_Mohajer22.php, r57.php, acid.php, newsh.php, r57.php, Backdoor.PHP.Agent.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "38fd7e45f9c11a37463c3ded1c76af4c"
 		hash1 = "9c34adbc8fd8d908cbb341734830f971"
 		hash2 = "ef43fef943e9df90ddb6257950b3538f"
@@ -2808,13 +2879,14 @@ rule webshell_c99_locus7s_c99_w4cking_xxx {
 	condition:
 		2 of them
 }
-rule webshell_browser_201_3_ma_ma2_download {
+rule Hacktool_webshell_browser_201_3_ma_ma2_download {
 	meta:
 		description = "Web Shell - from files browser.jsp, 201.jsp, 3.jsp, ma.jsp, ma2.jsp, download.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "37603e44ee6dc1c359feb68a0d566f76"
 		hash1 = "a7e25b8ac605753ed0c438db93f6c498"
 		hash2 = "fb8c6c3a69b93e5e7193036fd31a958d"
@@ -2828,13 +2900,14 @@ rule webshell_browser_201_3_ma_ma2_download {
 	condition:
 		2 of them
 }
-rule webshell_000_403_c5_queryDong_spyjsp2010 {
+rule Hacktool_webshell_000_403_c5_queryDong_spyjsp2010 {
 	meta:
 		description = "Web Shell - from files 000.jsp, 403.jsp, c5.jsp, queryDong.jsp, spyjsp2010.jsp"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "2eeb8bf151221373ee3fd89d58ed4d38"
 		hash1 = "059058a27a7b0059e2c2f007ad4675ef"
 		hash2 = "8b457934da3821ba58b06a113e0d53d9"
@@ -2848,13 +2921,14 @@ rule webshell_000_403_c5_queryDong_spyjsp2010 {
 	condition:
 		2 of them
 }
-rule webshell_r57shell127_r57_kartal_r57 {
+rule Hacktool_webshell_r57shell127_r57_kartal_r57 {
 	meta:
 		description = "Web Shell - from files r57shell127.php, r57_kartal.php, r57.php"
 		author = "Florian Roth"
 		date = "2014/01/28"
 		score = 70
-		super_rule = 1
+		
+		
 		hash0 = "ae025c886fbe7f9ed159f49593674832"
 		hash1 = "1d912c55b96e2efe8ca873d6040e3b30"
 		hash2 = "4108f28a9792b50d95f95b9e5314fa1e"
@@ -2866,7 +2940,7 @@ rule webshell_r57shell127_r57_kartal_r57 {
 		2 of them
 }
 
-rule webshell_webshells_new_con2 {
+rule Hacktool_webshell_webshells_new_con2 {
 	meta:
 		description = "Web shells - generated from file con2.asp"
 		author = "Florian Roth"
@@ -2879,7 +2953,7 @@ rule webshell_webshells_new_con2 {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_make2 {
+rule Hacktool_webshell_webshells_new_make2 {
 	meta:
 		description = "Web shells - generated from file make2.php"
 		author = "Florian Roth"
@@ -2891,7 +2965,7 @@ rule webshell_webshells_new_make2 {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_aaa {
+rule Hacktool_webshell_webshells_new_aaa {
 	meta:
 		description = "Web shells - generated from file aaa.asp"
 		author = "Florian Roth"
@@ -2905,7 +2979,7 @@ rule webshell_webshells_new_aaa {
 	condition:
 		1 of them
 }
-rule webshell_Expdoor_com_ASP {
+rule Hacktool_webshell_Expdoor_com_ASP {
 	meta:
 		description = "Web shells - generated from file Expdoor.com ASP.asp"
 		author = "Florian Roth"
@@ -2921,7 +2995,7 @@ rule webshell_Expdoor_com_ASP {
 	condition:
 		2 of them
 }
-rule webshell_webshells_new_php2 {
+rule Hacktool_webshell_webshells_new_php2 {
 	meta:
 		description = "Web shells - generated from file php2.php"
 		author = "Florian Roth"
@@ -2933,7 +3007,7 @@ rule webshell_webshells_new_php2 {
 	condition:
 		all of them
 }
-rule webshell_bypass_iisuser_p {
+rule Hacktool_webshell_bypass_iisuser_p {
 	meta:
 		description = "Web shells - generated from file bypass-iisuser-p.asp"
 		author = "Florian Roth"
@@ -2945,7 +3019,7 @@ rule webshell_bypass_iisuser_p {
 	condition:
 		all of them
 }
-rule webshell_sig_404super {
+rule Hacktool_webshell_sig_404super {
 	meta:
 		description = "Web shells - generated from file 404super.php"
 		author = "Florian Roth"
@@ -2962,7 +3036,7 @@ rule webshell_sig_404super {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_JSP {
+rule Hacktool_webshell_webshells_new_JSP {
 	meta:
 		description = "Web shells - generated from file JSP.jsp"
 		author = "Florian Roth"
@@ -2976,7 +3050,7 @@ rule webshell_webshells_new_JSP {
 	condition:
 		1 of them
 }
-rule webshell_webshell_123 {
+rule Hacktool_webshell_webshell_123 {
 	meta:
 		description = "Web shells - generated from file webshell-123.php"
 		author = "Florian Roth"
@@ -2991,7 +3065,7 @@ rule webshell_webshell_123 {
 	condition:
 		2 of them
 }
-rule webshell_dev_core {
+rule Hacktool_webshell_dev_core {
 	meta:
 		description = "Web shells - generated from file dev_core.php"
 		author = "Florian Roth"
@@ -3008,7 +3082,7 @@ rule webshell_dev_core {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_pHp {
+rule Hacktool_webshell_webshells_new_pHp {
 	meta:
 		description = "Web shells - generated from file pHp.php"
 		author = "Florian Roth"
@@ -3024,7 +3098,7 @@ rule webshell_webshells_new_pHp {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_pppp {
+rule Hacktool_webshell_webshells_new_pppp {
 	meta:
 		description = "Web shells - generated from file pppp.php"
 		author = "Florian Roth"
@@ -3038,7 +3112,7 @@ rule webshell_webshells_new_pppp {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_code {
+rule Hacktool_webshell_webshells_new_code {
 	meta:
 		description = "Web shells - generated from file code.php"
 		author = "Florian Roth"
@@ -3054,7 +3128,7 @@ rule webshell_webshells_new_code {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_jspyyy {
+rule Hacktool_webshell_webshells_new_jspyyy {
 	meta:
 		description = "Web shells - generated from file jspyyy.jsp"
 		author = "Florian Roth"
@@ -3066,7 +3140,7 @@ rule webshell_webshells_new_jspyyy {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_xxxx {
+rule Hacktool_webshell_webshells_new_xxxx {
 	meta:
 		description = "Web shells - generated from file xxxx.php"
 		author = "Florian Roth"
@@ -3078,7 +3152,7 @@ rule webshell_webshells_new_xxxx {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_JJjsp3 {
+rule Hacktool_webshell_webshells_new_JJjsp3 {
 	meta:
 		description = "Web shells - generated from file JJjsp3.jsp"
 		author = "Florian Roth"
@@ -3090,7 +3164,7 @@ rule webshell_webshells_new_JJjsp3 {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_PHP1 {
+rule Hacktool_webshell_webshells_new_PHP1 {
 	meta:
 		description = "Web shells - generated from file PHP1.php"
 		author = "Florian Roth"
@@ -3104,7 +3178,7 @@ rule webshell_webshells_new_PHP1 {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_JJJsp2 {
+rule Hacktool_webshell_webshells_new_JJJsp2 {
 	meta:
 		description = "Web shells - generated from file JJJsp2.jsp"
 		author = "Florian Roth"
@@ -3119,7 +3193,7 @@ rule webshell_webshells_new_JJJsp2 {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_radhat {
+rule Hacktool_webshell_webshells_new_radhat {
 	meta:
 		description = "Web shells - generated from file radhat.asp"
 		author = "Florian Roth"
@@ -3131,7 +3205,7 @@ rule webshell_webshells_new_radhat {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_asp1 {
+rule Hacktool_webshell_webshells_new_asp1 {
 	meta:
 		description = "Web shells - generated from file asp1.asp"
 		author = "Florian Roth"
@@ -3144,7 +3218,7 @@ rule webshell_webshells_new_asp1 {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_php6 {
+rule Hacktool_webshell_webshells_new_php6 {
 	meta:
 		description = "Web shells - generated from file php6.php"
 		author = "Florian Roth"
@@ -3158,7 +3232,7 @@ rule webshell_webshells_new_php6 {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_xxx {
+rule Hacktool_webshell_webshells_new_xxx {
 	meta:
 		description = "Web shells - generated from file xxx.php"
 		author = "Florian Roth"
@@ -3170,7 +3244,7 @@ rule webshell_webshells_new_xxx {
 	condition:
 		all of them
 }
-rule webshell_GetPostpHp {
+rule Hacktool_webshell_GetPostpHp {
 	meta:
 		description = "Web shells - generated from file GetPostpHp.php"
 		author = "Florian Roth"
@@ -3182,7 +3256,7 @@ rule webshell_GetPostpHp {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_php5 {
+rule Hacktool_webshell_webshells_new_php5 {
 	meta:
 		description = "Web shells - generated from file php5.php"
 		author = "Florian Roth"
@@ -3194,7 +3268,7 @@ rule webshell_webshells_new_php5 {
 	condition:
 		all of them
 }
-rule webshell_webshells_new_PHP {
+rule Hacktool_webshell_webshells_new_PHP {
 	meta:
 		description = "Web shells - generated from file PHP.php"
 		author = "Florian Roth"
@@ -3210,7 +3284,7 @@ rule webshell_webshells_new_PHP {
 	condition:
 		1 of them
 }
-rule webshell_webshells_new_Asp {
+rule Hacktool_webshell_webshells_new_Asp {
 	meta:
 		description = "Web shells - generated from file Asp.asp"
 		author = "Florian Roth"
@@ -3227,7 +3301,7 @@ rule webshell_webshells_new_Asp {
 
 /* Update from hackers tool pack */
 
-rule perlbot_pl {
+rule Hacktool_perlbot_pl {
 	meta:
 		description = "Semi-Auto-generated  - file perlbot.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3238,7 +3312,7 @@ rule perlbot_pl {
 	condition:
 		1 of them
 }
-rule php_backdoor_php {
+rule Hacktool_php_backdoor_php {
 	meta:
 		description = "Semi-Auto-generated  - file php-backdoor.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3250,7 +3324,7 @@ rule php_backdoor_php {
 	condition:
 		1 of them
 }
-rule Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit_php {
+rule Hacktool_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit_php {
 	meta:
 		description = "Semi-Auto-generated  - file Liz0ziM Private Safe Mode Command Execuriton Bypass Exploit.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3262,7 +3336,7 @@ rule Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit_php {
 	condition:
 		1 of them
 }
-rule Nshell__1__php_php {
+rule Hacktool_Nshell__1__php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Nshell (1).php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3273,7 +3347,7 @@ rule Nshell__1__php_php {
 	condition:
 		1 of them
 }
-rule shankar_php_php {
+rule Hacktool_shankar_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file shankar.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3285,7 +3359,7 @@ rule shankar_php_php {
 	condition:
 		1 of ($s*) and $sAuthor
 }
-rule Casus15_php_php {
+rule Hacktool_Casus15_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Casus15.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3297,7 +3371,7 @@ rule Casus15_php_php {
 	condition:
 		1 of them
 }
-rule small_php_php {
+rule Hacktool_small_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file small.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3309,7 +3383,7 @@ rule small_php_php {
 	condition:
 		2 of them
 }
-rule shellbot_pl {
+rule Hacktool_shellbot_pl {
 	meta:
 		description = "Semi-Auto-generated  - file shellbot.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3323,7 +3397,7 @@ rule shellbot_pl {
 	condition:
 		2 of them
 }
-rule fuckphpshell_php {
+rule Hacktool_fuckphpshell_php {
 	meta:
 		description = "Semi-Auto-generated  - file fuckphpshell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3336,7 +3410,7 @@ rule fuckphpshell_php {
 	condition:
 		2 of them
 }
-rule ngh_php_php {
+rule Hacktool_ngh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file ngh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3350,7 +3424,7 @@ rule ngh_php_php {
 	condition:
 		1 of them
 }
-rule jsp_reverse_jsp {
+rule Hacktool_jsp_reverse_jsp {
 	meta:
 		description = "Semi-Auto-generated  - file jsp-reverse.jsp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3362,7 +3436,7 @@ rule jsp_reverse_jsp {
 	condition:
 		2 of them
 }
-rule Tool_asp {
+rule Hacktool_Tool_asp {
 	meta:
 		description = "Semi-Auto-generated  - file Tool.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3375,7 +3449,7 @@ rule Tool_asp {
 	condition:
 		2 of them
 }
-rule NT_Addy_asp {
+rule Hacktool_NT_Addy_asp {
 	meta:
 		description = "Semi-Auto-generated  - file NT Addy.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3387,7 +3461,7 @@ rule NT_Addy_asp {
 	condition:
 		1 of them
 }
-rule SimAttacker___Vrsion_1_0_0___priv8_4_My_friend_php {
+rule Hacktool_SimAttacker___Vrsion_1_0_0___priv8_4_My_friend_php {
 	meta:
 		description = "Semi-Auto-generated  - file SimAttacker - Vrsion 1.0.0 - priv8 4 My friend.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3399,7 +3473,7 @@ rule SimAttacker___Vrsion_1_0_0___priv8_4_My_friend_php {
 	condition:
 		1 of them
 }
-rule RemExp_asp {
+rule Hacktool_RemExp_asp {
 	meta:
 		description = "Semi-Auto-generated  - file RemExp.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3411,7 +3485,7 @@ rule RemExp_asp {
 	condition:
 		2 of them
 }
-rule phvayvv_php_php {
+rule Hacktool_phvayvv_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file phvayvv.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3423,7 +3497,7 @@ rule phvayvv_php_php {
 	condition:
 		1 of them
 }
-rule klasvayv_asp {
+rule Hacktool_klasvayv_asp {
 	meta:
 		description = "Semi-Auto-generated  - file klasvayv.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3436,19 +3510,21 @@ rule klasvayv_asp {
 	condition:
 		1 of them
 }
-rule r57shell_php_php {
+
+rule Hacktool_r57shell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file r57shell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
 		hash = "d28445de424594a5f14d0fe2a7c4e94f"
 	strings:
+		$s0 = "r57shell" fullword
 		$s1 = " else if ($HTTP_POST_VARS['with'] == \"lynx\") { $HTTP_POST_VARS['cmd']= \"lynx "
 		$s2 = "RusH security team"
 		$s3 = "'ru_text12' => 'back-connect"
 	condition:
-		1 of them
+		3 of them
 }
-rule rst_sql_php_php {
+rule Hacktool_rst_sql_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file rst_sql.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3461,7 +3537,7 @@ rule rst_sql_php_php {
 	condition:
 		2 of them
 }
-rule wh_bindshell_py {
+rule Hacktool_wh_bindshell_py {
 	meta:
 		description = "Semi-Auto-generated  - file wh_bindshell.py.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3473,7 +3549,7 @@ rule wh_bindshell_py {
 	condition:
 		1 of them
 }
-rule lurm_safemod_on_cgi {
+rule Hacktool_lurm_safemod_on_cgi {
 	meta:
 		description = "Semi-Auto-generated  - file lurm_safemod_on.cgi.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3485,7 +3561,7 @@ rule lurm_safemod_on_cgi {
 	condition:
 		1 of them
 }
-rule c99madshell_v2_0_php_php {
+rule Hacktool_c99madshell_v2_0_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file c99madshell_v2.0.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3495,7 +3571,7 @@ rule c99madshell_v2_0_php_php {
 	condition:
 		all of them
 }
-rule backupsql_php_often_with_c99shell {
+rule Hacktool_backupsql_php_often_with_c99shell {
 	meta:
 		description = "Semi-Auto-generated  - file backupsql.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3506,7 +3582,7 @@ rule backupsql_php_often_with_c99shell {
 	condition:
 		all of them
 }
-rule uploader_php_php {
+rule Hacktool_uploader_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file uploader.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3518,7 +3594,7 @@ rule uploader_php_php {
 	condition:
 		2 of them
 }
-rule telnet_pl {
+rule Hacktool_telnet_pl {
 	meta:
 		description = "Semi-Auto-generated  - file telnet.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3529,7 +3605,7 @@ rule telnet_pl {
 	condition:
 		all of them
 }
-rule w3d_php_php {
+rule Hacktool_w3d_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file w3d.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3541,7 +3617,7 @@ rule w3d_php_php {
 	condition:
 		2 of them
 }
-rule WebShell_cgi {
+rule Hacktool_WebShell_cgi {
 	meta:
 		description = "Semi-Auto-generated  - file WebShell.cgi.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3552,7 +3628,7 @@ rule WebShell_cgi {
 	condition:
 		all of them
 }
-rule WinX_Shell_html {
+rule Hacktool_WinX_Shell_html {
 	meta:
 		description = "Semi-Auto-generated  - file WinX Shell.html.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3564,7 +3640,7 @@ rule WinX_Shell_html {
 	condition:
 		2 of them
 }
-rule Dx_php_php {
+rule Hacktool_Dx_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Dx.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3576,7 +3652,7 @@ rule Dx_php_php {
 	condition:
 		1 of them
 }
-rule csh_php_php {
+rule Hacktool_csh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file csh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3589,7 +3665,7 @@ rule csh_php_php {
 	condition:
 		1 of them
 }
-rule pHpINJ_php_php {
+rule Hacktool_pHpINJ_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file pHpINJ.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3601,7 +3677,7 @@ rule pHpINJ_php_php {
 	condition:
 		2 of them
 }
-rule sig_2008_php_php {
+rule Hacktool_sig_2008_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file 2008.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3614,7 +3690,7 @@ rule sig_2008_php_php {
 	condition:
 		1 of them
 }
-rule ak74shell_php_php {
+rule Hacktool_ak74shell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file ak74shell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3626,7 +3702,7 @@ rule ak74shell_php_php {
 	condition:
 		2 of them
 }
-rule Rem_View_php_php {
+rule Hacktool_Rem_View_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Rem View.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3638,7 +3714,7 @@ rule Rem_View_php_php {
 	condition:
 		1 of them
 }
-rule Java_Shell_js {
+rule Hacktool_Java_Shell_js {
 	meta:
 		description = "Semi-Auto-generated  - file Java Shell.js.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3650,7 +3726,7 @@ rule Java_Shell_js {
 	condition:
 		2 of them
 }
-rule STNC_php_php {
+rule Hacktool_STNC_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file STNC.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3663,7 +3739,7 @@ rule STNC_php_php {
 	condition:
 		1 of them
 }
-rule aZRaiLPhp_v1_0_php {
+rule Hacktool_aZRaiLPhp_v1_0_php {
 	meta:
 		description = "Semi-Auto-generated  - file aZRaiLPhp v1.0.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3675,7 +3751,7 @@ rule aZRaiLPhp_v1_0_php {
 	condition:
 		2 of them
 }
-rule Moroccan_Spamers_Ma_EditioN_By_GhOsT_php {
+rule Hacktool_Moroccan_Spamers_Ma_EditioN_By_GhOsT_php {
 	meta:
 		description = "Semi-Auto-generated  - file Moroccan Spamers Ma-EditioN By GhOsT.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3687,7 +3763,7 @@ rule Moroccan_Spamers_Ma_EditioN_By_GhOsT_php {
 	condition:
 		1 of them
 }
-rule zacosmall_php {
+rule Hacktool_zacosmall_php {
 	meta:
 		description = "Semi-Auto-generated  - file zacosmall.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3699,7 +3775,7 @@ rule zacosmall_php {
 	condition:
 		2 of them
 }
-rule CmdAsp_asp {
+rule Hacktool_CmdAsp_asp {
 	meta:
 		description = "Semi-Auto-generated  - file CmdAsp.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3712,7 +3788,7 @@ rule CmdAsp_asp {
 	condition:
 		2 of them
 }
-rule simple_backdoor_php {
+rule Hacktool_simple_backdoor_php {
 	meta:
 		description = "Semi-Auto-generated  - file simple-backdoor.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3724,7 +3800,7 @@ rule simple_backdoor_php {
 	condition:
 		2 of them
 }
-rule mysql_shell_php {
+rule Hacktool_mysql_shell_php {
 	meta:
 		description = "Semi-Auto-generated  - file mysql_shell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3736,7 +3812,7 @@ rule mysql_shell_php {
 	condition:
 		1 of them
 }
-rule Dive_Shell_1_0___Emperor_Hacking_Team_php {
+rule Hacktool_Dive_Shell_1_0___Emperor_Hacking_Team_php {
 	meta:
 		description = "Semi-Auto-generated  - file Dive Shell 1.0 - Emperor Hacking Team.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3749,7 +3825,7 @@ rule Dive_Shell_1_0___Emperor_Hacking_Team_php {
 	condition:
 		2 of them
 }
-rule Asmodeus_v0_1_pl {
+rule Hacktool_Asmodeus_v0_1_pl {
 	meta:
 		description = "Semi-Auto-generated  - file Asmodeus v0.1.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3762,7 +3838,7 @@ rule Asmodeus_v0_1_pl {
 	condition:
 		2 of them
 }
-rule backup_php_often_with_c99shell {
+rule Hacktool_backup_php_often_with_c99shell {
 	meta:
 		description = "Semi-Auto-generated  - file backup.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3774,7 +3850,7 @@ rule backup_php_often_with_c99shell {
 	condition:
 		all of them
 }
-rule Reader_asp {
+rule Hacktool_Reader_asp {
 	meta:
 		description = "Semi-Auto-generated  - file Reader.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3786,7 +3862,7 @@ rule Reader_asp {
 	condition:
 		2 of them
 }
-rule phpshell17_php {
+rule Hacktool_phpshell17_php {
 	meta:
 		description = "Semi-Auto-generated  - file phpshell17.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3798,7 +3874,7 @@ rule phpshell17_php {
 	condition:
 		1 of them
 }
-rule myshell_php_php {
+rule Hacktool_myshell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file myshell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3810,7 +3886,7 @@ rule myshell_php_php {
 	condition:
 		2 of them
 }
-rule SimShell_1_0___Simorgh_Security_MGZ_php {
+rule Hacktool_SimShell_1_0___Simorgh_Security_MGZ_php {
 	meta:
 		description = "Semi-Auto-generated  - file SimShell 1.0 - Simorgh Security MGZ.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3823,7 +3899,7 @@ rule SimShell_1_0___Simorgh_Security_MGZ_php {
 	condition:
 		2 of them
 }
-rule jspshall_jsp {
+rule Hacktool_jspshall_jsp {
 	meta:
 		description = "Semi-Auto-generated  - file jspshall.jsp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3835,7 +3911,7 @@ rule jspshall_jsp {
 	condition:
 		2 of them
 }
-rule webshell_php {
+rule Hacktool_webshell_php {
 	meta:
 		description = "Semi-Auto-generated  - file webshell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3846,7 +3922,7 @@ rule webshell_php {
 	condition:
 		all of them
 }
-rule rootshell_php {
+rule Hacktool_rootshell_php {
 	meta:
 		description = "Semi-Auto-generated  - file rootshell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3859,7 +3935,7 @@ rule rootshell_php {
 	condition:
 		2 of them
 }
-rule connectback2_pl {
+rule Hacktool_connectback2_pl {
 	meta:
 		description = "Semi-Auto-generated  - file connectback2.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3871,7 +3947,7 @@ rule connectback2_pl {
 	condition:
 		1 of them
 }
-rule DefaceKeeper_0_2_php {
+rule Hacktool_DefaceKeeper_0_2_php {
 	meta:
 		description = "Semi-Auto-generated  - file DefaceKeeper_0.2.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3883,7 +3959,7 @@ rule DefaceKeeper_0_2_php {
 	condition:
 		1 of them
 }
-rule shells_PHP_wso {
+rule Hacktool_shells_PHP_wso {
 	meta:
 		description = "Semi-Auto-generated  - file wso.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3894,7 +3970,7 @@ rule shells_PHP_wso {
 	condition:
 		1 of them
 }
-rule backdoor1_php {
+rule Hacktool_backdoor1_php {
 	meta:
 		description = "Semi-Auto-generated  - file backdoor1.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3906,7 +3982,7 @@ rule backdoor1_php {
 	condition:
 		1 of them
 }
-rule elmaliseker_asp {
+rule Hacktool_elmaliseker_asp {
 	meta:
 		description = "Semi-Auto-generated  - file elmaliseker.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3919,7 +3995,7 @@ rule elmaliseker_asp {
 	condition:
 		1 of them
 }
-rule indexer_asp {
+rule Hacktool_indexer_asp {
 	meta:
 		description = "Semi-Auto-generated  - file indexer.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3930,7 +4006,7 @@ rule indexer_asp {
 	condition:
 		1 of them
 }
-rule DxShell_php_php {
+rule Hacktool_DxShell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file DxShell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3941,7 +4017,7 @@ rule DxShell_php_php {
 	condition:
 		1 of them
 }
-rule s72_Shell_v1_1_Coding_html {
+rule Hacktool_s72_Shell_v1_1_Coding_html {
 	meta:
 		description = "Semi-Auto-generated  - file s72 Shell v1.1 Coding.html.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3953,7 +4029,7 @@ rule s72_Shell_v1_1_Coding_html {
 	condition:
 		1 of them
 }
-rule hidshell_php_php {
+rule Hacktool_hidshell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file hidshell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3963,7 +4039,7 @@ rule hidshell_php_php {
 	condition:
 		all of them
 }
-rule kacak_asp {
+rule Hacktool_kacak_asp {
 	meta:
 		description = "Semi-Auto-generated  - file kacak.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3976,7 +4052,7 @@ rule kacak_asp {
 	condition:
 		1 of them
 }
-rule PHP_Backdoor_Connect_pl_php {
+rule Hacktool_PHP_Backdoor_Connect_pl_php {
 	meta:
 		description = "Semi-Auto-generated  - file PHP Backdoor Connect.pl.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -3988,7 +4064,7 @@ rule PHP_Backdoor_Connect_pl_php {
 	condition:
 		1 of them
 }
-rule Antichat_Socks5_Server_php_php {
+rule Hacktool_Antichat_Socks5_Server_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Antichat Socks5 Server.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4000,7 +4076,7 @@ rule Antichat_Socks5_Server_php_php {
 	condition:
 		1 of them
 }
-rule Antichat_Shell_v1_3_php {
+rule Hacktool_Antichat_Shell_v1_3_php {
 	meta:
 		description = "Semi-Auto-generated  - file Antichat Shell v1.3.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4012,7 +4088,7 @@ rule Antichat_Shell_v1_3_php {
 	condition:
 		2 of them
 }
-rule Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_php {
+rule Hacktool_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_php {
 	meta:
 		description = "Semi-Auto-generated  - file Safe_Mode Bypass PHP 4.4.2 and PHP 5.1.2.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4024,7 +4100,7 @@ rule Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_php {
 	condition:
 		1 of them
 }
-rule mysql_php_php {
+rule Hacktool_mysql_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file mysql.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4036,7 +4112,7 @@ rule mysql_php_php {
 	condition:
 		1 of them
 }
-rule Worse_Linux_Shell_php {
+rule Hacktool_Worse_Linux_Shell_php {
 	meta:
 		description = "Semi-Auto-generated  - file Worse Linux Shell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4047,7 +4123,7 @@ rule Worse_Linux_Shell_php {
 	condition:
 		1 of them
 }
-rule cyberlords_sql_php_php {
+rule Hacktool_cyberlords_sql_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file cyberlords_sql.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4060,7 +4136,7 @@ rule cyberlords_sql_php_php {
 	condition:
 		1 of them
 }
-rule cmd_asp_5_1_asp {
+rule Hacktool_cmd_asp_5_1_asp {
 	meta:
 		description = "Semi-Auto-generated  - file cmd-asp-5.1.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4071,7 +4147,7 @@ rule cmd_asp_5_1_asp {
 	condition:
 		1 of them
 }
-rule pws_php_php {
+rule Hacktool_pws_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file pws.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4083,7 +4159,7 @@ rule pws_php_php {
 	condition:
 		2 of them
 }
-rule PHP_Shell_php_php {
+rule Hacktool_PHP_Shell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file PHP Shell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4094,7 +4170,7 @@ rule PHP_Shell_php_php {
 	condition:
 		all of them
 }
-rule Ayyildiz_Tim___AYT__Shell_v_2_1_Biz_html {
+rule Hacktool_Ayyildiz_Tim___AYT__Shell_v_2_1_Biz_html {
 	meta:
 		description = "Semi-Auto-generated  - file Ayyildiz Tim  -AYT- Shell v 2.1 Biz.html.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4107,7 +4183,7 @@ rule Ayyildiz_Tim___AYT__Shell_v_2_1_Biz_html {
 	condition:
 		2 of them
 }
-rule EFSO_2_asp {
+rule Hacktool_EFSO_2_asp {
 	meta:
 		description = "Semi-Auto-generated  - file EFSO_2.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4118,7 +4194,7 @@ rule EFSO_2_asp {
 	condition:
 		2 of them
 }
-rule lamashell_php {
+rule Hacktool_lamashell_php {
 	meta:
 		description = "Semi-Auto-generated  - file lamashell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4130,7 +4206,7 @@ rule lamashell_php {
 	condition:
 		1 of them
 }
-rule Ajax_PHP_Command_Shell_php {
+rule Hacktool_Ajax_PHP_Command_Shell_php {
 	meta:
 		description = "Semi-Auto-generated  - file Ajax_PHP Command Shell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4142,7 +4218,7 @@ rule Ajax_PHP_Command_Shell_php {
 	condition:
 		1 of them
 }
-rule JspWebshell_1_2_jsp {
+rule Hacktool_JspWebshell_1_2_jsp {
 	meta:
 		description = "Semi-Auto-generated  - file JspWebshell 1.2.jsp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4155,7 +4231,7 @@ rule JspWebshell_1_2_jsp {
 	condition:
 		2 of them
 }
-rule Sincap_php_php {
+rule Hacktool_Sincap_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Sincap.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4167,7 +4243,7 @@ rule Sincap_php_php {
 	condition:
 		2 of them
 }
-rule Test_php_php {
+rule Hacktool_Test_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file Test.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4179,7 +4255,7 @@ rule Test_php_php {
 	condition:
 		1 of them
 }
-rule Phyton_Shell_py {
+rule Hacktool_Phyton_Shell_py {
 	meta:
 		description = "Semi-Auto-generated  - file Phyton Shell.py.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4192,7 +4268,7 @@ rule Phyton_Shell_py {
 	condition:
 		1 of them
 }
-rule mysql_tool_php_php {
+rule Hacktool_mysql_tool_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file mysql_tool.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4204,7 +4280,7 @@ rule mysql_tool_php_php {
 	condition:
 		1 of them
 }
-rule Zehir_4_asp {
+rule Hacktool_Zehir_4_asp {
 	meta:
 		description = "Semi-Auto-generated  - file Zehir 4.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4215,7 +4291,7 @@ rule Zehir_4_asp {
 	condition:
 		1 of them
 }
-rule sh_php_php {
+rule Hacktool_sh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4226,7 +4302,7 @@ rule sh_php_php {
 	condition:
 		1 of them
 }
-rule phpbackdoor15_php {
+rule Hacktool_phpbackdoor15_php {
 	meta:
 		description = "Semi-Auto-generated  - file phpbackdoor15.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4238,7 +4314,7 @@ rule phpbackdoor15_php {
 	condition:
 		1 of them
 }
-rule phpjackal_php {
+rule Hacktool_phpjackal_php {
 	meta:
 		description = "Semi-Auto-generated  - file phpjackal.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4249,7 +4325,7 @@ rule phpjackal_php {
 	condition:
 		1 of them
 }
-rule sql_php_php {
+rule Hacktool_sql_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file sql.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4261,7 +4337,7 @@ rule sql_php_php {
 	condition:
 		1 of them
 }
-rule cgi_python_py {
+rule Hacktool_cgi_python_py {
 	meta:
 		description = "Semi-Auto-generated  - file cgi-python.py.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4273,7 +4349,7 @@ rule cgi_python_py {
 	condition:
 		1 of them
 }
-rule ru24_post_sh_php_php {
+rule Hacktool_ru24_post_sh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file ru24_post_sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4285,7 +4361,7 @@ rule ru24_post_sh_php_php {
 	condition:
 		1 of them
 }
-rule DTool_Pro_php {
+rule Hacktool_DTool_Pro_php {
 	meta:
 		description = "Semi-Auto-generated  - file DTool Pro.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4297,7 +4373,7 @@ rule DTool_Pro_php {
 	condition:
 		1 of them
 }
-rule telnetd_pl {
+rule Hacktool_telnetd_pl {
 	meta:
 		description = "Semi-Auto-generated  - file telnetd.pl.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4311,7 +4387,7 @@ rule telnetd_pl {
 	condition:
 		1 of them
 }
-rule php_include_w_shell_php {
+rule Hacktool_php_include_w_shell_php {
 	meta:
 		description = "Semi-Auto-generated  - file php-include-w-shell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4322,7 +4398,7 @@ rule php_include_w_shell_php {
 	condition:
 		1 of them
 }
-rule Safe0ver_Shell__Safe_Mod_Bypass_By_Evilc0der_php {
+rule Hacktool_Safe0ver_Shell__Safe_Mod_Bypass_By_Evilc0der_php {
 	meta:
 		description = "Semi-Auto-generated  - file Safe0ver Shell -Safe Mod Bypass By Evilc0der.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4334,7 +4410,7 @@ rule Safe0ver_Shell__Safe_Mod_Bypass_By_Evilc0der_php {
 	condition:
 		1 of them
 }
-rule shell_php_php {
+rule Hacktool_shell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - file shell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4346,19 +4422,9 @@ rule shell_php_php {
 	condition:
 		1 of them
 }
-rule telnet_cgi {
-	meta:
-		description = "Semi-Auto-generated  - file telnet.cgi.txt"
-		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		hash = "dee697481383052980c20c48de1598d1"
-	strings:
-		$s1 = "W A R N I N G: Private Server"
-		$s2 = "print \"Set-Cookie: SAVEDPWD=;\\n\"; # remove password cookie"
-		$s3 = "$Prompt = $WinNT ? \"$CurrentDir> \" : \"[admin\\@$ServerName $C"
-	condition:
-		1 of them
-}
-rule ironshell_php {
+
+
+rule Hacktool_ironshell_php {
 	meta:
 		description = "Semi-Auto-generated  - file ironshell.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4372,7 +4438,7 @@ rule ironshell_php {
 	condition:
 		1 of them
 }
-rule backdoorfr_php {
+rule Hacktool_backdoorfr_php {
 	meta:
 		description = "Semi-Auto-generated  - file backdoorfr.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4383,7 +4449,7 @@ rule backdoorfr_php {
 	condition:
 		1 of them
 }
-rule aspydrv_asp {
+rule Hacktool_aspydrv_asp {
 	meta:
 		description = "Semi-Auto-generated  - file aspydrv.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4396,7 +4462,7 @@ rule aspydrv_asp {
 	condition:
 		2 of them
 }
-rule cmdjsp_jsp {
+rule Hacktool_cmdjsp_jsp {
 	meta:
 		description = "Semi-Auto-generated  - file cmdjsp.jsp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4409,7 +4475,7 @@ rule cmdjsp_jsp {
 	condition:
 		2 of them
 }
-rule h4ntu_shell__powered_by_tsoi_ {
+rule Hacktool_h4ntu_shell__powered_by_tsoi_ {
 	meta:
 		description = "Semi-Auto-generated  - file h4ntu shell [powered by tsoi].txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4420,7 +4486,7 @@ rule h4ntu_shell__powered_by_tsoi_ {
 	condition:
 		1 of them
 }
-rule Ajan_asp {
+rule Hacktool_Ajan_asp {
 	meta:
 		description = "Semi-Auto-generated  - file Ajan.asp.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4432,7 +4498,7 @@ rule Ajan_asp {
 	condition:
 		1 of them
 }
-rule PHANTASMA_php {
+rule Hacktool_PHANTASMA_php {
 	meta:
 		description = "Semi-Auto-generated  - file PHANTASMA.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4445,7 +4511,7 @@ rule PHANTASMA_php {
 	condition:
 		2 of them
 }
-rule MySQL_Web_Interface_Version_0_8_php {
+rule Hacktool_MySQL_Web_Interface_Version_0_8_php {
 	meta:
 		description = "Semi-Auto-generated  - file MySQL Web Interface Version 0.8.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4458,7 +4524,7 @@ rule MySQL_Web_Interface_Version_0_8_php {
 	condition:
 		2 of them
 }
-rule simple_cmd_html {
+rule Hacktool_simple_cmd_html {
 	meta:
 		description = "Semi-Auto-generated  - file simple_cmd.html.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
@@ -4471,11 +4537,12 @@ rule simple_cmd_html {
 	condition:
 		all of them
 }
-rule _1_c2007_php_php_c100_php {
+rule Hacktool__1_c2007_php_php_c100_php {
 	meta:
 		description = "Semi-Auto-generated  - from files 1.txt, c2007.php.php.txt, c100.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "44542e5c3e9790815c49d5f9beffbbf2"
 		hash1 = "d089e7168373a0634e1ac18c0ee00085"
 		hash2 = "38fd7e45f9c11a37463c3ded1c76af4c"
@@ -4485,11 +4552,12 @@ rule _1_c2007_php_php_c100_php {
 	condition:
 		1 of them
 }
-rule _nst_php_php_img_php_php_nstview_php_php {
+rule Hacktool__nst_php_php_img_php_php_nstview_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files nst.php.php.txt, img.php.php.txt, nstview.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "ddaf9f1986d17284de83a17fe5f9fd94"
 		hash1 = "17a07bb84e137b8aa60f87cd6bfab748"
 		hash2 = "4745d510fed4378e4b1730f56f25e569"
@@ -4500,11 +4568,12 @@ rule _nst_php_php_img_php_php_nstview_php_php {
 	condition:
 		1 of them
 }
-rule _network_php_php_xinfo_php_php_nfm_php_php {
+rule Hacktool__network_php_php_xinfo_php_php_nfm_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files network.php.php.txt, xinfo.php.php.txt, nfm.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "acdbba993a5a4186fd864c5e4ea0ba4f"
 		hash1 = "2601b6fc1579f263d2f3960ce775df70"
 		hash2 = "401fbae5f10283051c39e640b77e4c26"
@@ -4514,11 +4583,12 @@ rule _network_php_php_xinfo_php_php_nfm_php_php {
 	condition:
 		all of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4529,11 +4599,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SpecialShell_99_php_php
 	condition:
 		1 of them
 }
-rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files r577.php.php.txt, SnIpEr_SA Shell.php.txt, r57.php.php.txt, r57 Shell.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "911195a9b7c010f61b66439d9048f400"
 		hash2 = "eddf7a8fde1e50a7f2a817ef7cece24f"
@@ -4546,11 +4617,12 @@ rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_r57_Shell_php_php_spy_php_php
 	condition:
 		1 of them
 }
-rule _c99shell_v1_0_php_php_c99php_SsEs_php_php_ctt_sh_php_php {
+rule Hacktool__c99shell_v1_0_php_php_c99php_SsEs_php_php_ctt_sh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files c99shell_v1.0.php.php.txt, c99php.txt, SsEs.php.php.txt, ctt_sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "d8ae5819a0a2349ec552cbcf3a62c975"
 		hash1 = "9e9ae0332ada9c3797d6cee92c2ede62"
 		hash2 = "6cd50a14ea0da0df6a246a60c8f6f9c9"
@@ -4562,11 +4634,12 @@ rule _c99shell_v1_0_php_php_c99php_SsEs_php_php_ctt_sh_php_php {
 	condition:
 		2 of them
 }
-rule _r577_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_spy_php_php_s_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files r577.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "eed14de3907c9aa2550d95550d1a2d5f"
 		hash2 = "817671e1bdc85e04cc3440bbd9288800"
@@ -4576,11 +4649,12 @@ rule _r577_php_php_spy_php_php_s_php_php {
 	condition:
 		1 of them
 }
-rule webshell_c99_generic {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php_php_ctt_sh_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt, SpecialShell_99.php.php.txt, ctt_sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4596,11 +4670,12 @@ rule webshell_c99_generic {
 	condition:
 		all of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4613,11 +4688,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c
 	condition:
 		1 of them
 }
-rule _w_php_php_wacking_php_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_wacking_php_php_SpecialShell_99_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files w.php.php.txt, wacking.php.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "9c5bb5e3a46ec28039e8986324e42792"
 		hash2 = "09609851caa129e40b0d56e90dfc476c"
@@ -4627,11 +4703,12 @@ rule _w_php_php_wacking_php_php_SpecialShell_99_php_php {
 	condition:
 		1 of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SsEs_php_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SsEs_php_php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, SsEs.php.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4643,11 +4720,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_SsEs_php_php_SpecialShe
 	condition:
 		1 of them
 }
-rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_spy_php_php_s_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files r577.php.php.txt, SnIpEr_SA Shell.php.txt, r57.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "911195a9b7c010f61b66439d9048f400"
 		hash2 = "eddf7a8fde1e50a7f2a817ef7cece24f"
@@ -4659,11 +4737,12 @@ rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php_spy_php_php_s_php_php {
 	condition:
 		2 of them
 }
-rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php {
+rule Hacktool__r577_php_php_SnIpEr_SA_Shell_php_r57_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files r577.php.php.txt, SnIpEr_SA Shell.php.txt, r57.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "911195a9b7c010f61b66439d9048f400"
 		hash2 = "eddf7a8fde1e50a7f2a817ef7cece24f"
@@ -4674,11 +4753,12 @@ rule _r577_php_php_SnIpEr_SA_Shell_php_r57_php_php {
 	condition:
 		3 of them
 }
-rule _r577_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files r577.php.php.txt, r57 Shell.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "8023394542cddf8aee5dec6072ed02b5"
 		hash2 = "eed14de3907c9aa2550d95550d1a2d5f"
@@ -4690,11 +4770,12 @@ rule _r577_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
 	condition:
 		2 of them
 }
-rule _wacking_php_php_1_SpecialShell_99_php_php_c100_php {
+rule Hacktool__wacking_php_php_1_SpecialShell_99_php_php_c100_php {
 	meta:
 		description = "Semi-Auto-generated  - from files wacking.php.php.txt, 1.txt, SpecialShell_99.php.php.txt, c100.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "9c5bb5e3a46ec28039e8986324e42792"
 		hash1 = "44542e5c3e9790815c49d5f9beffbbf2"
 		hash2 = "09609851caa129e40b0d56e90dfc476c"
@@ -4706,11 +4787,12 @@ rule _wacking_php_php_1_SpecialShell_99_php_php_c100_php {
 	condition:
 		1 of them
 }
-rule _r577_php_php_r57_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_r57_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files r577.php.php.txt, r57.php.php.txt, r57 Shell.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "eddf7a8fde1e50a7f2a817ef7cece24f"
 		hash2 = "8023394542cddf8aee5dec6072ed02b5"
@@ -4723,11 +4805,12 @@ rule _r577_php_php_r57_php_php_r57_Shell_php_php_spy_php_php_s_php_php {
 	condition:
 		2 of them
 }
-rule _w_php_php_wacking_php_php_SsEs_php_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_wacking_php_php_SsEs_php_php_SpecialShell_99_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files w.php.php.txt, wacking.php.php.txt, SsEs.php.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "9c5bb5e3a46ec28039e8986324e42792"
 		hash2 = "6cd50a14ea0da0df6a246a60c8f6f9c9"
@@ -4739,11 +4822,12 @@ rule _w_php_php_wacking_php_php_SsEs_php_php_SpecialShell_99_php_php {
 	condition:
 		1 of them
 }
-rule _webadmin_php_php_iMHaPFtp_php_php_Private_i3lue_php {
+rule Hacktool__webadmin_php_php_iMHaPFtp_php_php_Private_i3lue_php {
 	meta:
 		description = "Semi-Auto-generated  - from files webadmin.php.php.txt, iMHaPFtp.php.php.txt, Private-i3lue.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "b268e6fa3bf3fe496cffb4ea574ec4c7"
 		hash1 = "12911b73bc6a5d313b494102abcf5c57"
 		hash2 = "13f5c7a035ecce5f9f380967cf9d4e92"
@@ -4753,11 +4837,12 @@ rule _webadmin_php_php_iMHaPFtp_php_php_Private_i3lue_php {
 	condition:
 		all of them
 }
-rule multiple_php_webshells {
+rule Hacktool_multiple_php_webshells {
 	meta:
 		description = "Semi-Auto-generated  - from files multiple_php_webshells"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "911195a9b7c010f61b66439d9048f400"
 		hash2 = "be0f67f3e995517d18859ed57b4b4389"
@@ -4774,11 +4859,12 @@ rule multiple_php_webshells {
 	condition:
 		2 of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4789,11 +4875,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php {
 	condition:
 		1 of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4806,11 +4893,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_c
 	condition:
 		2 of them
 }
-rule _GFS_web_shell_ver_3_1_7___PRiV8_php_nshell_php_php_gfs_sh_php_php {
+rule Hacktool__GFS_web_shell_ver_3_1_7___PRiV8_php_nshell_php_php_gfs_sh_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files GFS web-shell ver 3.1.7 - PRiV8.php.txt, nshell.php.php.txt, gfs_sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "be0f67f3e995517d18859ed57b4b4389"
 		hash1 = "4a44d82da21438e32d4f514ab35c26b6"
 		hash2 = "f618f41f7ebeb5e5076986a66593afd1"
@@ -4821,11 +4909,12 @@ rule _GFS_web_shell_ver_3_1_7___PRiV8_php_nshell_php_php_gfs_sh_php_php {
 	condition:
 		2 of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4839,11 +4928,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_c99shell_v1_0_php_php_S
 	condition:
 		2 of them
 }
-rule _w_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "9c5bb5e3a46ec28039e8986324e42792"
 		hash2 = "d8ae5819a0a2349ec552cbcf3a62c975"
@@ -4855,11 +4945,12 @@ rule _w_php_php_wacking_php_php_c99shell_v1_0_php_php_c99php_SpecialShell_99_php
 	condition:
 		all of them
 }
-rule _antichat_php_php_Fatalshell_php_php_a_gedit_php_php {
+rule Hacktool__antichat_php_php_Fatalshell_php_php_a_gedit_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files antichat.php.php.txt, Fatalshell.php.php.txt, a_gedit.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "128e90b5e2df97e21e96d8e268cde7e3"
 		hash1 = "b15583f4eaad10a25ef53ab451a4a26d"
 		hash2 = "ab9c6b24ca15f4a1b7086cad78ff0f78"
@@ -4871,11 +4962,12 @@ rule _antichat_php_php_Fatalshell_php_php_a_gedit_php_php {
 	condition:
 		2 of them
 }
-rule _c99shell_v1_0_php_php_c99php_SsEs_php_php {
+rule Hacktool__c99shell_v1_0_php_php_c99php_SsEs_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files c99shell_v1.0.php.php.txt, c99php.txt, SsEs.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "d8ae5819a0a2349ec552cbcf3a62c975"
 		hash1 = "9e9ae0332ada9c3797d6cee92c2ede62"
 		hash2 = "6cd50a14ea0da0df6a246a60c8f6f9c9"
@@ -4884,11 +4976,12 @@ rule _c99shell_v1_0_php_php_c99php_SsEs_php_php {
 	condition:
 		1 of them
 }
-rule _Crystal_php_nshell_php_php_load_shell_php_php {
+rule Hacktool__Crystal_php_nshell_php_php_load_shell_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files Crystal.php.txt, nshell.php.php.txt, load_shell.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "fdbf54d5bf3264eb1c4bff1fac548879"
 		hash1 = "4a44d82da21438e32d4f514ab35c26b6"
 		hash2 = "0c5d227f4aa76785e4760cdcff78a661"
@@ -4899,11 +4992,12 @@ rule _Crystal_php_nshell_php_php_load_shell_php_php {
 	condition:
 		2 of them
 }
-rule _nst_php_php_cybershell_php_php_img_php_php_nstview_php_php {
+rule Hacktool__nst_php_php_cybershell_php_php_img_php_php_nstview_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files nst.php.php.txt, cybershell.php.php.txt, img.php.php.txt, nstview.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "ddaf9f1986d17284de83a17fe5f9fd94"
 		hash1 = "ef8828e0bc0641a655de3932199c0527"
 		hash2 = "17a07bb84e137b8aa60f87cd6bfab748"
@@ -4915,11 +5009,12 @@ rule _nst_php_php_cybershell_php_php_img_php_php_nstview_php_php {
 	condition:
 		2 of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_dC3_Security_Crew_Shell_PRiV_php_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_dC3_Security_Crew_Shell_PRiV_php_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, dC3 Security Crew Shell PRiV.php.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4931,11 +5026,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_dC3_Security_Crew_Shell
 	condition:
 		all of them
 }
-rule _c99shell_v1_0_php_php_c99php_1_c2007_php_php_c100_php {
+rule Hacktool__c99shell_v1_0_php_php_c99php_1_c2007_php_php_c100_php {
 	meta:
 		description = "Semi-Auto-generated  - from files c99shell_v1.0.php.php.txt, c99php.txt, 1.txt, c2007.php.php.txt, c100.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "d8ae5819a0a2349ec552cbcf3a62c975"
 		hash1 = "9e9ae0332ada9c3797d6cee92c2ede62"
 		hash2 = "44542e5c3e9790815c49d5f9beffbbf2"
@@ -4946,11 +5042,12 @@ rule _c99shell_v1_0_php_php_c99php_1_c2007_php_php_c100_php {
 	condition:
 		all of them
 }
-rule multiple_php_webshells_2 {
+rule Hacktool_multiple_php_webshells_2 {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt, SsEs.php.php.txt, SpecialShell_99.php.php.txt, ctt_sh.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4966,11 +5063,12 @@ rule multiple_php_webshells_2 {
 	condition:
 		all of them
 }
-rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_1_SpecialShell_99_php_php {
+rule Hacktool__w_php_php_c99madshell_v2_1_php_php_wacking_php_php_1_SpecialShell_99_php_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files w.php.php.txt, c99madshell_v2.1.php.php.txt, wacking.php.php.txt, 1.txt, SpecialShell_99.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "38a3f9f2aa47c2e940695f3dba6a7bb2"
 		hash1 = "3ca5886cd54d495dc95793579611f59a"
 		hash2 = "9c5bb5e3a46ec28039e8986324e42792"
@@ -4984,11 +5082,12 @@ rule _w_php_php_c99madshell_v2_1_php_php_wacking_php_php_1_SpecialShell_99_php_p
 	condition:
 		2 of them
 }
-rule _r577_php_php_r57_php_php_spy_php_php_s_php_php {
+rule Hacktool__r577_php_php_r57_php_php_spy_php_php_s_php_php {
 	meta:
 		description = "Semi-Auto-generated  - from files r577.php.php.txt, r57.php.php.txt, spy.php.php.txt, s.php.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "0714f80f35c1fddef1f8938b8d42a4c8"
 		hash1 = "eddf7a8fde1e50a7f2a817ef7cece24f"
 		hash2 = "eed14de3907c9aa2550d95550d1a2d5f"
@@ -5000,11 +5099,12 @@ rule _r577_php_php_r57_php_php_spy_php_php_s_php_php {
 	condition:
 		1 of them
 }
-rule _nixrem_php_php_c99shell_v1_0_php_php_c99php_NIX_REMOTE_WEB_SHELL_v_0_5_alpha_Lite_Public_Version_php {
+rule Hacktool__nixrem_php_php_c99shell_v1_0_php_php_c99php_NIX_REMOTE_WEB_SHELL_v_0_5_alpha_Lite_Public_Version_php {
 	meta:
-		description = "Semi-Auto-generated "
+		description = "Semi-Auto-generated  - from files nixrem.php.php.txt, c99shell_v1.0.php.php.txt, c99php.txt, NIX REMOTE WEB-SHELL v.0.5 alpha Lite Public Version.php.txt"
 		author = "Neo23x0 Yara BRG + customization by Stefan -dfate- Molls"
-		super_rule = 1
+		
+		
 		hash0 = "40a3e86a63d3d7f063a86aab5b5f92c6"
 		hash1 = "d8ae5819a0a2349ec552cbcf3a62c975"
 		hash2 = "9e9ae0332ada9c3797d6cee92c2ede62"
@@ -5020,7 +5120,7 @@ rule _nixrem_php_php_c99shell_v1_0_php_php_c99php_NIX_REMOTE_WEB_SHELL_v_0_5_alp
 
 /* GIF Header webshell */
 
-rule DarkSecurityTeam_Webshell {
+rule Hacktool_DarkSecurityTeam_Webshell {
 	meta:
 		description = "Dark Security Team Webshell"
 		author = "Florian Roth"
@@ -5032,24 +5132,9 @@ rule DarkSecurityTeam_Webshell {
 		1 of them
 }
 
-rule GIFCloaked_Webshell_A {
-	meta:
-		description = "Looks like a webshell cloaked as GIF"
-		author = "Florian Roth"
-		hash = "f1c95b13a71ca3629a0bb79601fcacf57cdfcf768806a71b26f2448f8c1d5d24"
-		score = 50
-	strings:
-		$magic = { 47 49 46 38 } /* GIF8 ... */
-		$s0 = "input type"
-		$s1 = "<%eval request"
-		$s2 = "<%eval(Request.Item["
-		$s3 = "LANGUAGE='VBScript'"
-	condition:
-		( $magic at 0 ) and ( 1 of ($s*) )
-		and not filepath contains "AppData"
-}
 
-rule PHP_Cloaked_Webshell_SuperFetchExec {
+
+rule Hacktool_PHP_Cloaked_Webshell_SuperFetchExec {
 	meta:
 		description = "Looks like a webshell cloaked as GIF - http://goo.gl/xFvioC"
 		reference = "http://goo.gl/xFvioC"
@@ -5063,7 +5148,7 @@ rule PHP_Cloaked_Webshell_SuperFetchExec {
 
 /* PHP Webshell Update - August 2014 - deducted from https://github.com/JohnTroony/php-webshells */
 
-rule WebShell_RemExp_asp_php {
+rule Hacktool_WebShell_RemExp_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - file RemExp.asp.php.txt"
 		author = "Florian Roth"
@@ -5077,7 +5162,7 @@ rule WebShell_RemExp_asp_php {
 	condition:
 		all of them
 }
-rule WebShell_dC3_Security_Crew_Shell_PRiV {
+rule Hacktool_WebShell_dC3_Security_Crew_Shell_PRiV {
 	meta:
 		description = "PHP Webshells Github Archive - file dC3_Security_Crew_Shell_PRiV.php"
 		author = "Florian Roth"
@@ -5092,7 +5177,7 @@ rule WebShell_dC3_Security_Crew_Shell_PRiV {
 	condition:
 		3 of them
 }
-rule WebShell_simattacker {
+rule Hacktool_WebShell_simattacker {
 	meta:
 		description = "PHP Webshells Github Archive - file simattacker.php"
 		author = "Florian Roth"
@@ -5109,7 +5194,7 @@ rule WebShell_simattacker {
 	condition:
 		2 of them
 }
-rule WebShell_DTool_Pro {
+rule Hacktool_WebShell_DTool_Pro {
 	meta:
 		description = "PHP Webshells Github Archive - file DTool Pro.php"
 		author = "Florian Roth"
@@ -5126,7 +5211,7 @@ rule WebShell_DTool_Pro {
 	condition:
 		3 of them
 }
-rule WebShell_ironshell {
+rule Hacktool_WebShell_ironshell {
 	meta:
 		description = "PHP Webshells Github Archive - file ironshell.php"
 		author = "Florian Roth"
@@ -5143,7 +5228,7 @@ rule WebShell_ironshell {
 	condition:
 		3 of them
 }
-rule WebShell_indexer_asp_php {
+rule Hacktool_WebShell_indexer_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - file indexer.asp.php.txt"
 		author = "Florian Roth"
@@ -5158,7 +5243,7 @@ rule WebShell_indexer_asp_php {
 	condition:
 		3 of them
 }
-rule WebShell_toolaspshell {
+rule Hacktool_WebShell_toolaspshell {
 	meta:
 		description = "PHP Webshells Github Archive - file toolaspshell.php"
 		author = "Florian Roth"
@@ -5170,7 +5255,7 @@ rule WebShell_toolaspshell {
 	condition:
 		2 of them
 }
-rule WebShell_b374k_mini_shell_php_php {
+rule Hacktool_WebShell_b374k_mini_shell_php_php {
 	meta:
 		description = "PHP Webshells Github Archive - file b374k-mini-shell-php.php.php"
 		author = "Florian Roth"
@@ -5182,7 +5267,7 @@ rule WebShell_b374k_mini_shell_php_php {
 	condition:
 		all of them
 }
-rule WebShell_Sincap_1_0 {
+rule Hacktool_WebShell_Sincap_1_0 {
 	meta:
 		description = "PHP Webshells Github Archive - file Sincap 1.0.php"
 		author = "Florian Roth"
@@ -5196,7 +5281,7 @@ rule WebShell_Sincap_1_0 {
 	condition:
 		2 of them
 }
-rule WebShell_b374k_php {
+rule Hacktool_WebShell_b374k_php {
 	meta:
 		description = "PHP Webshells Github Archive - file b374k.php.php"
 		author = "Florian Roth"
@@ -5210,7 +5295,7 @@ rule WebShell_b374k_php {
 	condition:
 		3 of them
 }
-rule WebShell_SimAttacker___Vrsion_1_0_0___priv8_4_My_friend {
+rule Hacktool_WebShell_SimAttacker___Vrsion_1_0_0___priv8_4_My_friend {
 	meta:
 		description = "PHP Webshells Github Archive - file SimAttacker - Vrsion 1.0.0 - priv8 4 My friend.php"
 		author = "Florian Roth"
@@ -5226,7 +5311,7 @@ rule WebShell_SimAttacker___Vrsion_1_0_0___priv8_4_My_friend {
 	condition:
 		3 of them
 }
-rule WebShell_h4ntu_shell__powered_by_tsoi_ {
+rule Hacktool_WebShell_h4ntu_shell__powered_by_tsoi_ {
 	meta:
 		description = "PHP Webshells Github Archive - file h4ntu shell [powered by tsoi].php"
 		author = "Florian Roth"
@@ -5241,7 +5326,7 @@ rule WebShell_h4ntu_shell__powered_by_tsoi_ {
 	condition:
 		3 of them
 }
-rule WebShell_php_webshells_MyShell {
+rule Hacktool_WebShell_php_webshells_MyShell {
 	meta:
 		description = "PHP Webshells Github Archive - file MyShell.php"
 		author = "Florian Roth"
@@ -5258,7 +5343,7 @@ rule WebShell_php_webshells_MyShell {
 	condition:
 		3 of them
 }
-rule WebShell_php_webshells_pws {
+rule Hacktool_WebShell_php_webshells_pws {
 	meta:
 		description = "PHP Webshells Github Archive - file pws.php"
 		author = "Florian Roth"
@@ -5273,7 +5358,7 @@ rule WebShell_php_webshells_pws {
 	condition:
 		4 of them
 }
-rule WebShell_reader_asp_php {
+rule Hacktool_WebShell_reader_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - file reader.asp.php.txt"
 		author = "Florian Roth"
@@ -5286,7 +5371,7 @@ rule WebShell_reader_asp_php {
 	condition:
 		3 of them
 }
-rule WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
+rule Hacktool_WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
 	meta:
 		description = "PHP Webshells Github Archive - file Safe_Mode_Bypass_PHP_4.4.2_and_PHP_5.1.2.php"
 		author = "Florian Roth"
@@ -5301,7 +5386,7 @@ rule WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2 {
 	condition:
 		3 of them
 }
-rule WebShell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
+rule Hacktool_WebShell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
 	meta:
 		description = "PHP Webshells Github Archive - file Liz0ziM Private Safe Mode Command Execuriton Bypass Exploit.php"
 		author = "Florian Roth"
@@ -5315,7 +5400,7 @@ rule WebShell_Liz0ziM_Private_Safe_Mode_Command_Execuriton_Bypass_Exploit {
 	condition:
 		1 of them
 }
-rule WebShell_php_backdoor {
+rule Hacktool_WebShell_php_backdoor {
 	meta:
 		description = "PHP Webshells Github Archive - file php-backdoor.php"
 		author = "Florian Roth"
@@ -5329,7 +5414,7 @@ rule WebShell_php_backdoor {
 	condition:
 		1 of them
 }
-rule WebShell_Worse_Linux_Shell {
+rule Hacktool_WebShell_Worse_Linux_Shell {
 	meta:
 		description = "PHP Webshells Github Archive - file Worse Linux Shell.php"
 		author = "Florian Roth"
@@ -5344,7 +5429,7 @@ rule WebShell_Worse_Linux_Shell {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_pHpINJ {
+rule Hacktool_WebShell_php_webshells_pHpINJ {
 	meta:
 		description = "PHP Webshells Github Archive - file pHpINJ.php"
 		author = "Florian Roth"
@@ -5360,7 +5445,7 @@ rule WebShell_php_webshells_pHpINJ {
 	condition:
 		1 of them
 }
-rule WebShell_php_webshells_NGH {
+rule Hacktool_WebShell_php_webshells_NGH {
 	meta:
 		description = "PHP Webshells Github Archive - file NGH.php"
 		author = "Florian Roth"
@@ -5376,7 +5461,7 @@ rule WebShell_php_webshells_NGH {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_matamu {
+rule Hacktool_WebShell_php_webshells_matamu {
 	meta:
 		description = "PHP Webshells Github Archive - file matamu.php"
 		author = "Florian Roth"
@@ -5391,7 +5476,7 @@ rule WebShell_php_webshells_matamu {
 	condition:
 		2 of them
 }
-rule WebShell_ru24_post_sh {
+rule Hacktool_WebShell_ru24_post_sh {
 	meta:
 		description = "PHP Webshells Github Archive - file ru24_post_sh.php"
 		author = "Florian Roth"
@@ -5405,7 +5490,7 @@ rule WebShell_ru24_post_sh {
 	condition:
 		1 of them
 }
-rule WebShell_hiddens_shell_v1 {
+rule Hacktool_WebShell_hiddens_shell_v1 {
 	meta:
 		description = "PHP Webshells Github Archive - file hiddens shell v1.php"
 		author = "Florian Roth"
@@ -5415,7 +5500,7 @@ rule WebShell_hiddens_shell_v1 {
 	condition:
 		all of them
 }
-rule WebShell_c99_madnet {
+rule Hacktool_WebShell_c99_madnet {
 	meta:
 		description = "PHP Webshells Github Archive - file c99_madnet.php"
 		author = "Florian Roth"
@@ -5429,7 +5514,7 @@ rule WebShell_c99_madnet {
 	condition:
 		all of them
 }
-rule WebShell_c99_locus7s {
+rule Hacktool_WebShell_c99_locus7s {
 	meta:
 		description = "PHP Webshells Github Archive - file c99_locus7s.php"
 		author = "Florian Roth"
@@ -5443,7 +5528,7 @@ rule WebShell_c99_locus7s {
 	condition:
 		2 of them
 }
-rule WebShell_JspWebshell_1_2 {
+rule Hacktool_WebShell_JspWebshell_1_2 {
 	meta:
 		description = "PHP Webshells Github Archive - file JspWebshell_1.2.php"
 		author = "Florian Roth"
@@ -5458,7 +5543,7 @@ rule WebShell_JspWebshell_1_2 {
 	condition:
 		3 of them
 }
-rule WebShell_safe0ver {
+rule Hacktool_WebShell_safe0ver {
 	meta:
 		description = "PHP Webshells Github Archive - file safe0ver.php"
 		author = "Florian Roth"
@@ -5474,7 +5559,7 @@ rule WebShell_safe0ver {
 	condition:
 		3 of them
 }
-rule WebShell_Uploader {
+rule Hacktool_WebShell_Uploader {
 	meta:
 		description = "PHP Webshells Github Archive - file Uploader.php"
 		author = "Florian Roth"
@@ -5484,7 +5569,7 @@ rule WebShell_Uploader {
 	condition:
 		all of them
 }
-rule WebShell_php_webshells_kral {
+rule Hacktool_WebShell_php_webshells_kral {
 	meta:
 		description = "PHP Webshells Github Archive - file kral.php"
 		author = "Florian Roth"
@@ -5499,7 +5584,7 @@ rule WebShell_php_webshells_kral {
 	condition:
 		2 of them
 }
-rule WebShell_cgitelnet {
+rule Hacktool_WebShell_cgitelnet {
 	meta:
 		description = "PHP Webshells Github Archive - file cgitelnet.php"
 		author = "Florian Roth"
@@ -5512,7 +5597,7 @@ rule WebShell_cgitelnet {
 	condition:
 		2 of them
 }
-rule WebShell_simple_backdoor {
+rule Hacktool_WebShell_simple_backdoor {
 	meta:
 		description = "PHP Webshells Github Archive - file simple-backdoor.php"
 		author = "Florian Roth"
@@ -5530,7 +5615,7 @@ rule WebShell_simple_backdoor {
 	condition:
 		all of them
 }
-rule WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_2 {
+rule Hacktool_WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_2 {
 	meta:
 		description = "PHP Webshells Github Archive - file Safe_Mode Bypass PHP 4.4.2 and PHP 5.1.2.php"
 		author = "Florian Roth"
@@ -5543,7 +5628,7 @@ rule WebShell_Safe_Mode_Bypass_PHP_4_4_2_and_PHP_5_1_2_2 {
 	condition:
 		2 of them
 }
-rule WebShell_NTDaddy_v1_9 {
+rule Hacktool_WebShell_NTDaddy_v1_9 {
 	meta:
 		description = "PHP Webshells Github Archive - file NTDaddy v1.9.php"
 		author = "Florian Roth"
@@ -5556,7 +5641,7 @@ rule WebShell_NTDaddy_v1_9 {
 	condition:
 		2 of them
 }
-rule WebShell_lamashell {
+rule Hacktool_WebShell_lamashell {
 	meta:
 		description = "PHP Webshells Github Archive - file lamashell.php"
 		author = "Florian Roth"
@@ -5571,7 +5656,7 @@ rule WebShell_lamashell {
 	condition:
 		2 of them
 }
-rule WebShell_Simple_PHP_backdoor_by_DK {
+rule Hacktool_WebShell_Simple_PHP_backdoor_by_DK {
 	meta:
 		description = "PHP Webshells Github Archive - file Simple_PHP_backdoor_by_DK.php"
 		author = "Florian Roth"
@@ -5585,7 +5670,7 @@ rule WebShell_Simple_PHP_backdoor_by_DK {
 	condition:
 		2 of them
 }
-rule WebShell_Moroccan_Spamers_Ma_EditioN_By_GhOsT {
+rule Hacktool_WebShell_Moroccan_Spamers_Ma_EditioN_By_GhOsT {
 	meta:
 		description = "PHP Webshells Github Archive - file Moroccan Spamers Ma-EditioN By GhOsT.php"
 		author = "Florian Roth"
@@ -5597,7 +5682,7 @@ rule WebShell_Moroccan_Spamers_Ma_EditioN_By_GhOsT {
 	condition:
 		all of them
 }
-rule WebShell_C99madShell_v__2_0_madnet_edition {
+rule Hacktool_WebShell_C99madShell_v__2_0_madnet_edition {
 	meta:
 		description = "PHP Webshells Github Archive - file C99madShell v. 2.0 madnet edition.php"
 		author = "Florian Roth"
@@ -5611,7 +5696,7 @@ rule WebShell_C99madShell_v__2_0_madnet_edition {
 	condition:
 		all of them
 }
-rule WebShell_CmdAsp_asp_php {
+rule Hacktool_WebShell_CmdAsp_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - file CmdAsp.asp.php.txt"
 		author = "Florian Roth"
@@ -5629,7 +5714,7 @@ rule WebShell_CmdAsp_asp_php {
 	condition:
 		4 of them
 }
-rule WebShell_NCC_Shell {
+rule Hacktool_WebShell_NCC_Shell {
 	meta:
 		description = "PHP Webshells Github Archive - file NCC-Shell.php"
 		author = "Florian Roth"
@@ -5644,7 +5729,7 @@ rule WebShell_NCC_Shell {
 	condition:
 		3 of them
 }
-rule WebShell_php_webshells_README {
+rule Hacktool_WebShell_php_webshells_README {
 	meta:
 		description = "PHP Webshells Github Archive - file README.md"
 		author = "Florian Roth"
@@ -5655,7 +5740,7 @@ rule WebShell_php_webshells_README {
 	condition:
 		all of them
 }
-rule WebShell_backupsql {
+rule Hacktool_WebShell_backupsql {
 	meta:
 		description = "PHP Webshells Github Archive - file backupsql.php"
 		author = "Florian Roth"
@@ -5669,7 +5754,7 @@ rule WebShell_backupsql {
 	condition:
 		2 of them
 }
-rule WebShell_AK_74_Security_Team_Web_Shell_Beta_Version {
+rule Hacktool_WebShell_AK_74_Security_Team_Web_Shell_Beta_Version {
 	meta:
 		description = "PHP Webshells Github Archive - file AK-74 Security Team Web Shell Beta Version.php"
 		author = "Florian Roth"
@@ -5681,7 +5766,7 @@ rule WebShell_AK_74_Security_Team_Web_Shell_Beta_Version {
 	condition:
 		1 of them
 }
-rule WebShell_php_webshells_cpanel {
+rule Hacktool_WebShell_php_webshells_cpanel {
 	meta:
 		description = "PHP Webshells Github Archive - file cpanel.php"
 		author = "Florian Roth"
@@ -5696,7 +5781,7 @@ rule WebShell_php_webshells_cpanel {
 	condition:
 		2 of them
 }
-rule WebShell_accept_language {
+rule Hacktool_WebShell_accept_language {
 	meta:
 		description = "PHP Webshells Github Archive - file accept_language.php"
 		author = "Florian Roth"
@@ -5706,7 +5791,7 @@ rule WebShell_accept_language {
 	condition:
 		all of them
 }
-rule WebShell_php_webshells_529 {
+rule Hacktool_WebShell_php_webshells_529 {
 	meta:
 		description = "PHP Webshells Github Archive - file 529.php"
 		author = "Florian Roth"
@@ -5722,7 +5807,7 @@ rule WebShell_php_webshells_529 {
 	condition:
 		2 of them
 }
-rule WebShell_STNC_WebShell_v0_8 {
+rule Hacktool_WebShell_STNC_WebShell_v0_8 {
 	meta:
 		description = "PHP Webshells Github Archive - file STNC WebShell v0.8.php"
 		author = "Florian Roth"
@@ -5734,7 +5819,7 @@ rule WebShell_STNC_WebShell_v0_8 {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_tryag {
+rule Hacktool_WebShell_php_webshells_tryag {
 	meta:
 		description = "PHP Webshells Github Archive - file tryag.php"
 		author = "Florian Roth"
@@ -5748,7 +5833,7 @@ rule WebShell_php_webshells_tryag {
 	condition:
 		3 of them
 }
-rule WebShell_dC3_Security_Crew_Shell_PRiV_2 {
+rule Hacktool_WebShell_dC3_Security_Crew_Shell_PRiV_2 {
 	meta:
 		description = "PHP Webshells Github Archive - file dC3 Security Crew Shell PRiV.php"
 		author = "Florian Roth"
@@ -5762,7 +5847,7 @@ rule WebShell_dC3_Security_Crew_Shell_PRiV_2 {
 	condition:
 		3 of them
 }
-rule WebShell_qsd_php_backdoor {
+rule Hacktool_WebShell_qsd_php_backdoor {
 	meta:
 		description = "PHP Webshells Github Archive - file qsd-php-backdoor.php"
 		author = "Florian Roth"
@@ -5775,7 +5860,7 @@ rule WebShell_qsd_php_backdoor {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_spygrup {
+rule Hacktool_WebShell_php_webshells_spygrup {
 	meta:
 		description = "PHP Webshells Github Archive - file spygrup.php"
 		author = "Florian Roth"
@@ -5788,7 +5873,7 @@ rule WebShell_php_webshells_spygrup {
 	condition:
 		3 of them
 }
-rule WebShell_Web_shell__c_ShAnKaR {
+rule Hacktool_WebShell_Web_shell__c_ShAnKaR {
 	meta:
 		description = "PHP Webshells Github Archive - file Web-shell (c)ShAnKaR.php"
 		author = "Florian Roth"
@@ -5801,7 +5886,7 @@ rule WebShell_Web_shell__c_ShAnKaR {
 	condition:
 		2 of them
 }
-rule WebShell_Ayyildiz_Tim___AYT__Shell_v_2_1_Biz {
+rule Hacktool_WebShell_Ayyildiz_Tim___AYT__Shell_v_2_1_Biz {
 	meta:
 		description = "PHP Webshells Github Archive - file Ayyildiz Tim  -AYT- Shell v 2.1 Biz.php"
 		author = "Florian Roth"
@@ -5814,7 +5899,7 @@ rule WebShell_Ayyildiz_Tim___AYT__Shell_v_2_1_Biz {
 	condition:
 		3 of them
 }
-rule WebShell_Gamma_Web_Shell {
+rule Hacktool_WebShell_Gamma_Web_Shell {
 	meta:
 		description = "PHP Webshells Github Archive - file Gamma Web Shell.php"
 		author = "Florian Roth"
@@ -5827,7 +5912,7 @@ rule WebShell_Gamma_Web_Shell {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_aspydrv {
+rule Hacktool_WebShell_php_webshells_aspydrv {
 	meta:
 		description = "PHP Webshells Github Archive - file aspydrv.php"
 		author = "Florian Roth"
@@ -5841,7 +5926,7 @@ rule WebShell_php_webshells_aspydrv {
 	condition:
 		3 of them
 }
-rule WebShell_JspWebshell_1_2_2 {
+rule Hacktool_WebShell_JspWebshell_1_2_2 {
 	meta:
 		description = "PHP Webshells Github Archive - file JspWebshell 1.2.php"
 		author = "Florian Roth"
@@ -5855,7 +5940,7 @@ rule WebShell_JspWebshell_1_2_2 {
 	condition:
 		3 of them
 }
-rule WebShell_g00nshell_v1_3 {
+rule Hacktool_WebShell_g00nshell_v1_3 {
 	meta:
 		description = "PHP Webshells Github Archive - file g00nshell-v1.3.php"
 		author = "Florian Roth"
@@ -5869,7 +5954,7 @@ rule WebShell_g00nshell_v1_3 {
 	condition:
 		2 of them
 }
-rule WebShell_WinX_Shell {
+rule Hacktool_WebShell_WinX_Shell {
 	meta:
 		description = "PHP Webshells Github Archive - file WinX Shell.php"
 		author = "Florian Roth"
@@ -5883,7 +5968,7 @@ rule WebShell_WinX_Shell {
 	condition:
 		3 of them
 }
-rule WebShell_PHANTASMA {
+rule Hacktool_WebShell_PHANTASMA {
 	meta:
 		description = "PHP Webshells Github Archive - file PHANTASMA.php"
 		author = "Florian Roth"
@@ -5896,7 +5981,7 @@ rule WebShell_PHANTASMA {
 	condition:
 		3 of them
 }
-rule WebShell_php_webshells_cw {
+rule Hacktool_WebShell_php_webshells_cw {
 	meta:
 		description = "PHP Webshells Github Archive - file cw.php"
 		author = "Florian Roth"
@@ -5911,7 +5996,7 @@ rule WebShell_php_webshells_cw {
 	condition:
 		3 of them
 }
-rule WebShell_php_include_w_shell {
+rule Hacktool_WebShell_php_include_w_shell {
 	meta:
 		description = "PHP Webshells Github Archive - file php-include-w-shell.php"
 		author = "Florian Roth"
@@ -5923,7 +6008,7 @@ rule WebShell_php_include_w_shell {
 	condition:
 		1 of them
 }
-rule WebShell_mysql_tool {
+rule Hacktool_WebShell_mysql_tool {
 	meta:
 		description = "PHP Webshells Github Archive - file mysql_tool.php"
 		author = "Florian Roth"
@@ -5934,7 +6019,7 @@ rule WebShell_mysql_tool {
 	condition:
 		2 of them
 }
-rule WebShell_PhpSpy_Ver_2006 {
+rule Hacktool_WebShell_PhpSpy_Ver_2006 {
 	meta:
 		description = "PHP Webshells Github Archive - file PhpSpy Ver 2006.php"
 		author = "Florian Roth"
@@ -5947,7 +6032,7 @@ rule WebShell_PhpSpy_Ver_2006 {
 	condition:
 		1 of them
 }
-rule WebShell_ZyklonShell {
+rule Hacktool_WebShell_ZyklonShell {
 	meta:
 		description = "PHP Webshells Github Archive - file ZyklonShell.php"
 		author = "Florian Roth"
@@ -5960,7 +6045,7 @@ rule WebShell_ZyklonShell {
 	condition:
 		all of them
 }
-rule WebShell_php_webshells_myshell {
+rule Hacktool_WebShell_php_webshells_myshell {
 	meta:
 		description = "PHP Webshells Github Archive - file myshell.php"
 		author = "Florian Roth"
@@ -5973,7 +6058,7 @@ rule WebShell_php_webshells_myshell {
 	condition:
 		1 of them
 }
-rule WebShell_php_webshells_lolipop {
+rule Hacktool_WebShell_php_webshells_lolipop {
 	meta:
 		description = "PHP Webshells Github Archive - file lolipop.php"
 		author = "Florian Roth"
@@ -5985,7 +6070,7 @@ rule WebShell_php_webshells_lolipop {
 	condition:
 		all of them
 }
-rule WebShell_simple_cmd {
+rule Hacktool_WebShell_simple_cmd {
 	meta:
 		description = "PHP Webshells Github Archive - file simple_cmd.php"
 		author = "Florian Roth"
@@ -5998,7 +6083,7 @@ rule WebShell_simple_cmd {
 	condition:
 		1 of them
 }
-rule WebShell_go_shell {
+rule Hacktool_WebShell_go_shell {
 	meta:
 		description = "PHP Webshells Github Archive - file go-shell.php"
 		author = "Florian Roth"
@@ -6012,7 +6097,7 @@ rule WebShell_go_shell {
 	condition:
 		1 of them
 }
-rule WebShell_aZRaiLPhp_v1_0 {
+rule Hacktool_WebShell_aZRaiLPhp_v1_0 {
 	meta:
 		description = "PHP Webshells Github Archive - file aZRaiLPhp v1.0.php"
 		author = "Florian Roth"
@@ -6025,7 +6110,7 @@ rule WebShell_aZRaiLPhp_v1_0 {
 	condition:
 		2 of them
 }
-rule WebShell_webshells_zehir4 {
+rule Hacktool_WebShell_webshells_zehir4 {
 	meta:
 		description = "Webshells Github Archive - file zehir4"
 		author = "Florian Roth"
@@ -6037,7 +6122,7 @@ rule WebShell_webshells_zehir4 {
 	condition:
 		1 of them
 }
-rule WebShell_zehir4_asp_php {
+rule Hacktool_WebShell_zehir4_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - file zehir4.asp.php.txt"
 		author = "Florian Roth"
@@ -6049,7 +6134,7 @@ rule WebShell_zehir4_asp_php {
 	condition:
 		2 of them
 }
-rule WebShell_php_webshells_lostDC {
+rule Hacktool_WebShell_php_webshells_lostDC {
 	meta:
 		description = "PHP Webshells Github Archive - file lostDC.php"
 		author = "Florian Roth"
@@ -6063,7 +6148,7 @@ rule WebShell_php_webshells_lostDC {
 	condition:
 		2 of them
 }
-rule WebShell_CasuS_1_5 {
+rule Hacktool_WebShell_CasuS_1_5 {
 	meta:
 		description = "PHP Webshells Github Archive - file CasuS 1.5.php"
 		author = "Florian Roth"
@@ -6075,7 +6160,7 @@ rule WebShell_CasuS_1_5 {
 	condition:
 		1 of them
 }
-rule WebShell_ftpsearch {
+rule Hacktool_WebShell_ftpsearch {
 	meta:
 		description = "PHP Webshells Github Archive - file ftpsearch.php"
 		author = "Florian Roth"
@@ -6088,11 +6173,12 @@ rule WebShell_ftpsearch {
 	condition:
 		2 of them
 }
-rule WebShell__Cyber_Shell_cybershell_Cyber_Shell__v_1_0_ {
+rule Hacktool_WebShell__Cyber_Shell_cybershell_Cyber_Shell__v_1_0_ {
 	meta:
 		description = "PHP Webshells Github Archive - from files Cyber Shell.php, cybershell.php, Cyber Shell (v 1.0).php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "ef7f7c45d26614cea597f2f8e64a85d54630fe38"
 		hash1 = "cabf47b96e3b2c46248f075bdbc46197db28a25f"
 		hash2 = "9e165d4ed95e0501cd9a90155ac60546eb5b1076"
@@ -6104,11 +6190,12 @@ rule WebShell__Cyber_Shell_cybershell_Cyber_Shell__v_1_0_ {
 	condition:
 		2 of them
 }
-rule WebShell__Ajax_PHP_Command_Shell_Ajax_PHP_Command_Shell_soldierofallah {
+rule Hacktool_WebShell__Ajax_PHP_Command_Shell_Ajax_PHP_Command_Shell_soldierofallah {
 	meta:
 		description = "PHP Webshells Github Archive - from files Ajax_PHP Command Shell.php, Ajax_PHP_Command_Shell.php, soldierofallah.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "fa11deaee821ca3de7ad1caafa2a585ee1bc8d82"
 		hash1 = "c0a4ba3e834fb63e0a220a43caaf55c654f97429"
 		hash2 = "16fa789b20409c1f2ffec74484a30d0491904064"
@@ -6123,11 +6210,12 @@ rule WebShell__Ajax_PHP_Command_Shell_Ajax_PHP_Command_Shell_soldierofallah {
 	condition:
 		3 of them
 }
-rule WebShell_Generic_PHP_7 {
+rule Hacktool_WebShell_Generic_PHP_7 {
 	meta:
-		description = "PHP Webshells Github Archive"
+		description = "PHP Webshells Github Archive - from files Mysql interface v1.0.php, MySQL Web Interface Version 0.8.php, Mysql_interface_v1.0.php, MySQL_Web_Interface_Version_0.8.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "de98f890790756f226f597489844eb3e53a867a9"
 		hash1 = "128988c8ef5294d51c908690d27f69dffad4e42e"
 		hash2 = "fd64f2bf77df8bcf4d161ec125fa5c3695fe1267"
@@ -6140,11 +6228,12 @@ rule WebShell_Generic_PHP_7 {
 	condition:
 		2 of them
 }
-rule WebShell__Small_Web_Shell_by_ZaCo_small_zaco_zacosmall {
+rule Hacktool_WebShell__Small_Web_Shell_by_ZaCo_small_zaco_zacosmall {
 	meta:
 		description = "PHP Webshells Github Archive - from files Small Web Shell by ZaCo.php, small.php, zaco.php, zacosmall.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "b148ead15d34a55771894424ace2a92983351dda"
 		hash1 = "e4ba288f6d46dc77b403adf7d411a280601c635b"
 		hash2 = "e5713d6d231c844011e9a74175a77e8eb835c856"
@@ -6157,11 +6246,12 @@ rule WebShell__Small_Web_Shell_by_ZaCo_small_zaco_zacosmall {
 	condition:
 		2 of them
 }
-rule WebShell_Generic_PHP_8 {
+rule Hacktool_WebShell_Generic_PHP_8 {
 	meta:
-		description = "PHP Webshells Github Archive"
+		description = "PHP Webshells Github Archive - from files Macker's Private PHPShell.php, PHP Shell.php, Safe0ver Shell -Safe Mod Bypass By Evilc0der.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "fc1ae242b926d70e32cdb08bbe92628bc5bd7f99"
 		hash1 = "9ad55629c4576e5a31dd845012d13a08f1c1f14e"
 		hash2 = "c4aa2cf665c784553740c3702c3bfcb5d7af65a3"
@@ -6175,11 +6265,12 @@ rule WebShell_Generic_PHP_8 {
 	condition:
 		3 of them
 }
-rule WebShell__PH_Vayv_PHVayv_PH_Vayv_klasvayv_asp_php {
+rule Hacktool_WebShell__PH_Vayv_PHVayv_PH_Vayv_klasvayv_asp_php {
 	meta:
 		description = "PHP Webshells Github Archive - from files PH Vayv.php, PHVayv.php, PH_Vayv.php, klasvayv.asp.php.txt"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "b51962a1ffa460ec793317571fc2f46042fd13ee"
 		hash1 = "408ac9ca3d435c0f78bda370b33e84ba25afc357"
 		hash2 = "4003ae289e3ae036755976f8d2407c9381ff5653"
@@ -6192,11 +6283,12 @@ rule WebShell__PH_Vayv_PHVayv_PH_Vayv_klasvayv_asp_php {
 	condition:
 		2 of them
 }
-rule WebShell_Generic_PHP_9 {
+rule Hacktool_WebShell_Generic_PHP_9 {
 	meta:
 		description = "PHP Webshells Github Archive - from files KAdot Universal Shell v0.1.6.php, KAdot_Universal_Shell_v0.1.6.php, KA_uShell 0.1.6.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "89f2a7007a2cd411e0a7abd2ff5218d212b84d18"
 		hash1 = "2266178ad4eb72c2386c0a4d536e5d82bb7ed6a2"
 		hash2 = "0daed818cac548324ad0c5905476deef9523ad73"
@@ -6210,11 +6302,12 @@ rule WebShell_Generic_PHP_9 {
 	condition:
 		3 of them
 }
-rule WebShell__PH_Vayv_PHVayv_PH_Vayv {
+rule Hacktool_WebShell__PH_Vayv_PHVayv_PH_Vayv {
 	meta:
 		description = "PHP Webshells Github Archive - from files PH Vayv.php, PHVayv.php, PH_Vayv.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "b51962a1ffa460ec793317571fc2f46042fd13ee"
 		hash1 = "408ac9ca3d435c0f78bda370b33e84ba25afc357"
 		hash2 = "4003ae289e3ae036755976f8d2407c9381ff5653"
@@ -6225,11 +6318,12 @@ rule WebShell__PH_Vayv_PHVayv_PH_Vayv {
 	condition:
 		2 of them
 }
-rule WebShell_Generic_PHP_1 {
+rule Hacktool_WebShell_Generic_PHP_1 {
 	meta:
-		description = "PHP Webshells Github Archive - from files Dive Shell 1.0"
+		description = "PHP Webshells Github Archive - from files Dive Shell 1.0 - Emperor Hacking Team.php, Dive_Shell_1.0_Emperor_Hacking_Team.php, SimShell 1.0 - Simorgh Security MGZ.php, SimShell_1.0_-_Simorgh_Security_MGZ.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "3b086b9b53cf9d25ff0d30b1d41bb2f45c7cda2b"
 		hash1 = "2558e728184b8efcdb57cfab918d95b06d45de04"
 		hash2 = "203a8021192531d454efbc98a3bbb8cabe09c85c"
@@ -6245,11 +6339,12 @@ rule WebShell_Generic_PHP_1 {
 	condition:
 		5 of them
 }
-rule WebShell_Generic_PHP_2 {
+rule Hacktool_WebShell_Generic_PHP_2 {
 	meta:
 		description = "PHP Webshells Github Archive - from files CrystalShell v.1.php, load_shell.php, Loaderz WEB Shell.php, stres.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "335a0851304acedc3f117782b61479bbc0fd655a"
 		hash1 = "ca9fcfb50645dc0712abdf18d613ed2196e66241"
 		hash2 = "36d8782d749638fdcaeed540d183dd3c8edc6791"
@@ -6263,11 +6358,12 @@ rule WebShell_Generic_PHP_2 {
 	condition:
 		4 of them
 }
-rule WebShell__CrystalShell_v_1_erne_stres {
+rule Hacktool_WebShell__CrystalShell_v_1_erne_stres {
 	meta:
 		description = "PHP Webshells Github Archive - from files CrystalShell v.1.php, erne.php, stres.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "335a0851304acedc3f117782b61479bbc0fd655a"
 		hash1 = "6eb4ab630bd25bec577b39fb8a657350bf425687"
 		hash2 = "03f88f494654f2ad0361fb63e805b6bbfc0c86de"
@@ -6283,11 +6379,12 @@ rule WebShell__CrystalShell_v_1_erne_stres {
 	condition:
 		5 of them
 }
-rule WebShell_Generic_PHP_3 {
+rule Hacktool_WebShell_Generic_PHP_3 {
 	meta:
-		description = "PHP Webshells Github Archive"
+		description = "PHP Webshells Github Archive - from files Antichat Shell v1.3.php, Antichat Shell. Modified by Go0o$E.php, Antichat Shell.php, fatal.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "d829e87b3ce34460088c7775a60bded64e530cd4"
 		hash1 = "d710c95d9f18ec7c76d9349a28dd59c3605c02be"
 		hash2 = "f044d44e559af22a1a7f9db72de1206f392b8976"
@@ -6301,11 +6398,12 @@ rule WebShell_Generic_PHP_3 {
 	condition:
 		all of them
 }
-rule WebShell_Generic_PHP_4 {
+rule Hacktool_WebShell_Generic_PHP_4 {
 	meta:
 		description = "PHP Webshells Github Archive - from files CrystalShell v.1.php, load_shell.php, nshell.php, Loaderz WEB Shell.php, stres.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "335a0851304acedc3f117782b61479bbc0fd655a"
 		hash1 = "ca9fcfb50645dc0712abdf18d613ed2196e66241"
 		hash2 = "86bc40772de71b1e7234d23cab355e1ff80c474d"
@@ -6322,12 +6420,31 @@ rule WebShell_Generic_PHP_4 {
 	condition:
 		all of them
 }
-
-rule WebShell_GFS {
+rule Hacktool_WebShell_Generic_PHP_5 {
+	meta:
+		description = "PHP Webshells Github Archive - from files ex0shell.php, megabor.php, GRP WebShell 2.0 release build 2018 (C)2006,Great.php"
+		author = "Florian Roth"
+		
+		
+		hash0 = "64461ad8d8f23ea078201a31d747157f701a4e00"
+		hash1 = "3df1afbcfa718da6fc8af27554834ff6d1a86562"
+		hash2 = "ad86ef7f24f75081318146edc788e5466722a629"
+	strings:
+		$s0 = "(($perms & 0x0400) ? 'S' : '-'));" fullword
+		$s10 = "} elseif (($perms & 0x8000) == 0x8000) {" fullword
+		$s11 = "if (($perms & 0xC000) == 0xC000) {" fullword
+		$s12 = "$info .= (($perms & 0x0008) ?" fullword
+		$s16 = "// Block special" fullword
+		$s18 = "$info = 's';" fullword
+	condition:
+		all of them
+}
+rule Hacktool_WebShell_GFS {
 	meta:
 		description = "PHP Webshells Github Archive - from files GFS web-shell ver 3.1.7 - PRiV8.php, Predator.php, GFS_web-shell_ver_3.1.7_-_PRiV8.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "c2f1ef6b11aaec255d4dd31efad18a3869a2a42c"
 		hash1 = "34f6640985b07009dbd06cd70983451aa4fe9822"
 		hash2 = "d25ef72bdae3b3cb0fc0fdd81cfa58b215812a50"
@@ -6338,11 +6455,12 @@ rule WebShell_GFS {
 	condition:
 		all of them
 }
-rule WebShell__CrystalShell_v_1_sosyete_stres {
+rule Hacktool_WebShell__CrystalShell_v_1_sosyete_stres {
 	meta:
 		description = "PHP Webshells Github Archive - from files CrystalShell v.1.php, sosyete.php, stres.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "335a0851304acedc3f117782b61479bbc0fd655a"
 		hash1 = "e32405e776e87e45735c187c577d3a4f98a64059"
 		hash2 = "03f88f494654f2ad0361fb63e805b6bbfc0c86de"
@@ -6357,11 +6475,12 @@ rule WebShell__CrystalShell_v_1_sosyete_stres {
 	condition:
 		all of them
 }
-rule WebShell_Generic_PHP_10 {
+rule Hacktool_WebShell_Generic_PHP_10 {
 	meta:
 		description = "PHP Webshells Github Archive - from files Cyber Shell.php, cybershell.php, Cyber Shell (v 1.0).php, PHPRemoteView.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "ef7f7c45d26614cea597f2f8e64a85d54630fe38"
 		hash1 = "cabf47b96e3b2c46248f075bdbc46197db28a25f"
 		hash2 = "9e165d4ed95e0501cd9a90155ac60546eb5b1076"
@@ -6376,11 +6495,12 @@ rule WebShell_Generic_PHP_10 {
 	condition:
 		all of them
 }
-rule WebShell_Generic_PHP_11 {
+rule Hacktool_WebShell_Generic_PHP_11 {
 	meta:
 		description = "PHP Webshells Github Archive - from files rootshell.php, Rootshell.v.1.0.php, s72 Shell v1.1 Coding.php, s72_Shell_v1.1_Coding.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "31a82cbee8dffaf8eb7b73841f3f3e8e9b3e78cf"
 		hash1 = "838c7191cb10d5bb0fc7460b4ad0c18c326764c6"
 		hash2 = "8dfcd919d8ddc89335307a7b2d5d467b1fd67351"
@@ -6397,11 +6517,12 @@ rule WebShell_Generic_PHP_11 {
 	condition:
 		all of them
 }
-rule WebShell__findsock_php_findsock_shell_php_reverse_shell {
+rule Hacktool_WebShell__findsock_php_findsock_shell_php_reverse_shell {
 	meta:
 		description = "PHP Webshells Github Archive - from files findsock.c, php-findsock-shell.php, php-reverse-shell.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "5622c9841d76617bfc3cd4cab1932d8349b7044f"
 		hash1 = "4a20f36035bbae8e342aab0418134e750b881d05"
 		hash2 = "40dbdc0bdf5218af50741ba011c5286a723fa9bf"
@@ -6410,11 +6531,12 @@ rule WebShell__findsock_php_findsock_shell_php_reverse_shell {
 	condition:
 		all of them
 }
-rule WebShell_Generic_PHP_6 {
+rule Hacktool_WebShell_Generic_PHP_6 {
 	meta:
-		description = "PHP Webshells Github Archive"
+		description = "PHP Webshells Github Archive - from files c0derz shell [csh] v. 0.1.1 release.php, CrystalShell v.1.php, load_shell.php, Loaderz WEB Shell.php, stres.php"
 		author = "Florian Roth"
-		super_rule = 1
+		
+		
 		hash0 = "1a08f5260c4a2614636dfc108091927799776b13"
 		hash1 = "335a0851304acedc3f117782b61479bbc0fd655a"
 		hash2 = "ca9fcfb50645dc0712abdf18d613ed2196e66241"
@@ -6431,10 +6553,10 @@ rule WebShell_Generic_PHP_6 {
 		4 of them
 }
 
-rule Unpack_Injectt {
+rule Hacktool_Unpack_Injectt {
 	meta:
 		description = "Webshells Auto-generated - file Injectt.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8a5d2158a566c87edc999771e12d42c5"
 	strings:
 		$s2 = "%s -Run                              -->To Install And Run The Service"
@@ -6443,10 +6565,10 @@ rule Unpack_Injectt {
 	condition:
 		all of them
 }
-rule HYTop_DevPack_fso {
+rule Hacktool_HYTop_DevPack_fso {
 	meta:
 		description = "Webshells Auto-generated - file fso.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b37f3cde1a08890bd822a182c3a881f6"
 	strings:
 		$s0 = "<!-- PageFSO Below -->"
@@ -6454,20 +6576,20 @@ rule HYTop_DevPack_fso {
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_ssh {
+rule Hacktool_FeliksPack3___PHP_Shells_ssh {
 	meta:
 		description = "Webshells Auto-generated - file ssh.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1aa5307790d72941589079989b4f900e"
 	strings:
 		$s0 = "eval(gzinflate(str_rot13(base64_decode('"
 	condition:
 		all of them
 }
-rule Debug_BDoor {
+rule Hacktool_Debug_BDoor {
 	meta:
 		description = "Webshells Auto-generated - file BDoor.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "e4e8e31dd44beb9320922c5f49739955"
 	strings:
 		$s1 = "\\BDoor\\"
@@ -6475,10 +6597,10 @@ rule Debug_BDoor {
 	condition:
 		all of them
 }
-rule bin_Client {
+rule Hacktool_bin_Client {
 	meta:
 		description = "Webshells Auto-generated - file Client.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5f91a5b46d155cacf0cc6673a2a5461b"
 	strings:
 		$s0 = "Recieved respond from server!!"
@@ -6488,10 +6610,10 @@ rule bin_Client {
 	condition:
 		all of them
 }
-rule ZXshell2_0_rar_Folder_ZXshell {
+rule Hacktool_ZXshell2_0_rar_Folder_ZXshell {
 	meta:
 		description = "Webshells Auto-generated - file ZXshell.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "246ce44502d2f6002d720d350e26c288"
 	strings:
 		$s0 = "WPreviewPagesn"
@@ -6499,10 +6621,10 @@ rule ZXshell2_0_rar_Folder_ZXshell {
 	condition:
 		all of them
 }
-rule RkNTLoad {
+rule Hacktool_RkNTLoad {
 	meta:
 		description = "Webshells Auto-generated - file RkNTLoad.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "262317c95ced56224f136ba532b8b34f"
 	strings:
 		$s1 = "$Info: This file is packed with the UPX executable packer http://upx.tsx.org $"
@@ -6516,10 +6638,10 @@ rule RkNTLoad {
 	condition:
 		all of them
 }
-rule binder2_binder2 {
+rule Hacktool_binder2_binder2 {
 	meta:
 		description = "Webshells Auto-generated - file binder2.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d594e90ad23ae0bc0b65b59189c12f11"
 	strings:
 		$s0 = "IsCharAlphaNumericA"
@@ -6531,10 +6653,10 @@ rule binder2_binder2 {
 	condition:
 		all of them
 }
-rule thelast_orice2 {
+rule Hacktool_thelast_orice2 {
 	meta:
 		description = "Webshells Auto-generated - file orice2.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "aa63ffb27bde8d03d00dda04421237ae"
 	strings:
 		$s0 = " $aa = $_GET['aa'];"
@@ -6542,10 +6664,10 @@ rule thelast_orice2 {
 	condition:
 		all of them
 }
-rule FSO_s_sincap {
+rule Hacktool_FSO_s_sincap {
 	meta:
 		description = "Webshells Auto-generated - file sincap.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "dc5c2c2392b84a1529abd92e98e9aa5b"
 	strings:
 		$s0 = "    <font color=\"#E5E5E5\" style=\"font-size: 8pt; font-weight: 700\" face=\"Arial\">"
@@ -6553,20 +6675,20 @@ rule FSO_s_sincap {
 	condition:
 		all of them
 }
-rule PhpShell {
+rule Hacktool_PhpShell {
 	meta:
 		description = "Webshells Auto-generated - file PhpShell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "539baa0d39a9cf3c64d65ee7a8738620"
 	strings:
 		$s2 = "href=\"http://www.gimpster.com/wiki/PhpShell\">www.gimpster.com/wiki/PhpShell</a>."
 	condition:
 		all of them
 }
-rule HYTop_DevPack_config {
+rule Hacktool_HYTop_DevPack_config {
 	meta:
 		description = "Webshells Auto-generated - file config.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b41d0e64e64a685178a3155195921d61"
 	strings:
 		$s0 = "const adminPassword=\""
@@ -6575,10 +6697,10 @@ rule HYTop_DevPack_config {
 	condition:
 		all of them
 }
-rule sendmail {
+rule Hacktool_sendmail {
 	meta:
 		description = "Webshells Auto-generated - file sendmail.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "75b86f4a21d8adefaf34b3a94629bd17"
 	strings:
 		$s3 = "_NextPyC808"
@@ -6586,20 +6708,20 @@ rule sendmail {
 	condition:
 		all of them
 }
-rule FSO_s_zehir4 {
+rule Hacktool_FSO_s_zehir4 {
 	meta:
 		description = "Webshells Auto-generated - file zehir4.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5b496a61363d304532bcf52ee21f5d55"
 	strings:
 		$s5 = " byMesaj "
 	condition:
 		all of them
 }
-rule hkshell_hkshell {
+rule Hacktool_hkshell_hkshell {
 	meta:
 		description = "Webshells Auto-generated - file hkshell.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "168cab58cee59dc4706b3be988312580"
 	strings:
 		$s1 = "PrSessKERNELU"
@@ -6608,40 +6730,40 @@ rule hkshell_hkshell {
 	condition:
 		all of them
 }
-rule iMHaPFtp {
+rule Hacktool_iMHaPFtp {
 	meta:
 		description = "Webshells Auto-generated - file iMHaPFtp.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "12911b73bc6a5d313b494102abcf5c57"
 	strings:
 		$s1 = "echo \"\\t<th class=\\\"permission_header\\\"><a href=\\\"$self?{$d}sort=permission$r\\\">"
 	condition:
 		all of them
 }
-rule Unpack_TBack {
+rule Hacktool_Unpack_TBack {
 	meta:
 		description = "Webshells Auto-generated - file TBack.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a9d1007823bf96fb163ab38726b48464"
 	strings:
 		$s5 = "\\final\\new\\lcc\\public.dll"
 	condition:
 		all of them
 }
-rule DarkSpy105 {
+rule Hacktool_DarkSpy105 {
 	meta:
 		description = "Webshells Auto-generated - file DarkSpy105.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "f0b85e7bec90dba829a3ede1ab7d8722"
 	strings:
 		$s7 = "Sorry,DarkSpy got an unknown exception,please re-run it,thanks!"
 	condition:
 		all of them
 }
-rule EditServer_EXE {
+rule Hacktool_EditServer_EXE {
 	meta:
 		description = "Webshells Auto-generated - file EditServer.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "f945de25e0eba3bdaf1455b3a62b9832"
 	strings:
 		$s2 = "Server %s Have Been Configured"
@@ -6650,20 +6772,20 @@ rule EditServer_EXE {
 	condition:
 		all of them
 }
-rule FSO_s_reader {
+rule Hacktool_FSO_s_reader {
 	meta:
 		description = "Webshells Auto-generated - file reader.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b598c8b662f2a1f6cc61f291fb0a6fa2"
 	strings:
 		$s2 = "mailto:mailbomb@hotmail."
 	condition:
 		all of them
 }
-rule ASP_CmdAsp {
+rule Hacktool_ASP_CmdAsp {
 	meta:
 		description = "Webshells Auto-generated - file CmdAsp.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "79d4f3425f7a89befb0ef3bafe5e332f"
 	strings:
 		$s2 = "' -- Read the output from our command and remove the temp file -- '"
@@ -6672,10 +6794,10 @@ rule ASP_CmdAsp {
 	condition:
 		all of them
 }
-rule KA_uShell {
+rule Hacktool_KA_uShell {
 	meta:
 		description = "Webshells Auto-generated - file KA_uShell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "685f5d4f7f6751eaefc2695071569aab"
 	strings:
 		$s5 = "if(empty($_SERVER['PHP_AUTH_PW']) || $_SERVER['PHP_AUTH_PW']<>$pass"
@@ -6683,10 +6805,10 @@ rule KA_uShell {
 	condition:
 		all of them
 }
-rule PHP_Backdoor_v1 {
+rule Hacktool_PHP_Backdoor_v1 {
 	meta:
 		description = "Webshells Auto-generated - file PHP Backdoor v1.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "0506ba90759d11d78befd21cabf41f3d"
 	strings:
 
@@ -6695,10 +6817,10 @@ rule PHP_Backdoor_v1 {
 	condition:
 		all of them
 }
-rule svchostdll {
+rule Hacktool_svchostdll {
 	meta:
 		description = "Webshells Auto-generated - file svchostdll.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "0f6756c8cb0b454c452055f189e4c3f4"
 	strings:
 		$s0 = "InstallService"
@@ -6713,20 +6835,20 @@ rule svchostdll {
 	condition:
 		all of them
 }
-rule HYTop_DevPack_server {
+rule Hacktool_HYTop_DevPack_server {
 	meta:
 		description = "Webshells Auto-generated - file server.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1d38526a215df13c7373da4635541b43"
 	strings:
 		$s0 = "<!-- PageServer Below -->"
 	condition:
 		all of them
 }
-rule vanquish {
+rule Hacktool_vanquish {
 	meta:
 		description = "Webshells Auto-generated - file vanquish.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "684450adde37a93e8bb362994efc898c"
 	strings:
 		$s3 = "You cannot delete protected files/folders! Instead, your attempt has been logged"
@@ -6735,10 +6857,10 @@ rule vanquish {
 	condition:
 		all of them
 }
-rule winshell {
+rule Hacktool_winshell {
 	meta:
 		description = "Webshells Auto-generated - file winshell.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3144410a37dd4c29d004a814a294ea26"
 	strings:
 		$s0 = "Software\\Microsoft\\Windows\\CurrentVersion\\RunServices"
@@ -6753,10 +6875,10 @@ rule winshell {
 	condition:
 		all of them
 }
-rule FSO_s_remview {
+rule Hacktool_FSO_s_remview {
 	meta:
 		description = "Webshells Auto-generated - file remview.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b4a09911a5b23e00b55abe546ded691c"
 	strings:
 		$s2 = "      echo \"<hr size=1 noshade>\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\""
@@ -6765,20 +6887,20 @@ rule FSO_s_remview {
 	condition:
 		all of them
 }
-rule saphpshell {
+rule Hacktool_saphpshell {
 	meta:
 		description = "Webshells Auto-generated - file saphpshell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d7bba8def713512ddda14baf9cd6889a"
 	strings:
 		$s0 = "<td><input type=\"text\" name=\"command\" size=\"60\" value=\"<?=$_POST['command']?>"
 	condition:
 		all of them
 }
-rule HYTop2006_rar_Folder_2006Z {
+rule Hacktool_HYTop2006_rar_Folder_2006Z {
 	meta:
 		description = "Webshells Auto-generated - file 2006Z.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "fd1b6129abd4ab177fed135e3b665488"
 	strings:
 		$s1 = "wangyong,czy,allen,lcx,Marcos,kEvin1986,myth"
@@ -6786,10 +6908,10 @@ rule HYTop2006_rar_Folder_2006Z {
 	condition:
 		all of them
 }
-rule admin_ad {
+rule Hacktool_admin_ad {
 	meta:
 		description = "Webshells Auto-generated - file admin-ad.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "e6819b8f8ff2f1073f7d46a0b192f43b"
 	strings:
 		$s6 = "<td align=\"center\"> <input name=\"cmd\" type=\"text\" id=\"cmd\" siz"
@@ -6797,20 +6919,20 @@ rule admin_ad {
 	condition:
 		all of them
 }
-rule FSO_s_casus15 {
+rule Hacktool_FSO_s_casus15 {
 	meta:
 		description = "Webshells Auto-generated - file casus15.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8d155b4239d922367af5d0a1b89533a3"
 	strings:
 		$s6 = "if((is_dir(\"$deldir/$file\")) AND ($file!=\".\") AND ($file!=\"..\"))"
 	condition:
 		all of them
 }
-rule BIN_Client {
+rule Hacktool_BIN_Client {
 	meta:
 		description = "Webshells Auto-generated - file Client.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "9f0a74ec81bc2f26f16c5c172b80eca7"
 	strings:
 		$s0 = "=====Remote Shell Closed====="
@@ -6822,10 +6944,10 @@ rule BIN_Client {
 	condition:
 		4 of them
 }
-rule shelltools_g0t_root_uptime {
+rule Hacktool_shelltools_g0t_root_uptime {
 	meta:
 		description = "Webshells Auto-generated - file uptime.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d1f56102bc5d3e2e37ab3ffa392073b9"
 	strings:
 		$s0 = "JDiamondCSlC~"
@@ -6836,10 +6958,10 @@ rule shelltools_g0t_root_uptime {
 	condition:
 		all of them
 }
-rule Simple_PHP_BackDooR {
+rule Hacktool_Simple_PHP_BackDooR {
 	meta:
 		description = "Webshells Auto-generated - file Simple_PHP_BackDooR.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a401132363eecc3a1040774bec9cb24f"
 	strings:
 		$s0 = "<hr>to browse go to http://<? echo $SERVER_NAME.$REQUEST_URI; ?>?d=[directory he"
@@ -6848,10 +6970,10 @@ rule Simple_PHP_BackDooR {
 	condition:
 		1 of them
 }
-rule sig_2005Gray {
+rule Hacktool_sig_2005Gray {
 	meta:
 		description = "Webshells Auto-generated - file 2005Gray.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "75dbe3d3b70a5678225d3e2d78b604cc"
 	strings:
 		$s0 = "SCROLLBAR-FACE-COLOR: #e8e7e7;"
@@ -6861,20 +6983,20 @@ rule sig_2005Gray {
 	condition:
 		all of them
 }
-rule DllInjection {
+rule Hacktool_DllInjection {
 	meta:
 		description = "Webshells Auto-generated - file DllInjection.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a7b92283a5102886ab8aee2bc5c8d718"
 	strings:
 		$s0 = "\\BDoor\\DllInjecti"
 	condition:
 		all of them
 }
-rule Mithril_v1_45_Mithril {
+rule Hacktool_Mithril_v1_45_Mithril {
 	meta:
 		description = "Webshells Auto-generated - file Mithril.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "f1484f882dc381dde6eaa0b80ef64a07"
 	strings:
 		$s2 = "cress.exe"
@@ -6882,10 +7004,10 @@ rule Mithril_v1_45_Mithril {
 	condition:
 		all of them
 }
-rule hkshell_hkrmv {
+rule Hacktool_hkshell_hkrmv {
 	meta:
 		description = "Webshells Auto-generated - file hkrmv.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "bd3a0b7a6b5536f8d96f50956560e9bf"
 	strings:
 		$s5 = "/THUMBPOSITION7"
@@ -6893,10 +7015,10 @@ rule hkshell_hkrmv {
 	condition:
 		all of them
 }
-rule phpshell {
+rule Hacktool_phpshell {
 	meta:
 		description = "Webshells Auto-generated - file phpshell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1dccb1ea9f24ffbd085571c88585517b"
 	strings:
 		$s1 = "echo \"<input size=\\\"100\\\" type=\\\"text\\\" name=\\\"newfile\\\" value=\\\"$inputfile\\\"><b"
@@ -6905,10 +7027,10 @@ rule phpshell {
 	condition:
 		all of them
 }
-rule FSO_s_cmd {
+rule Hacktool_FSO_s_cmd {
 	meta:
 		description = "Webshells Auto-generated - file cmd.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cbe8e365d41dd3cd8e462ca434cf385f"
 	strings:
 		$s0 = "<%= \"\\\\\" & oScriptNet.ComputerName & \"\\\" & oScriptNet.UserName %>"
@@ -6916,10 +7038,10 @@ rule FSO_s_cmd {
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_phpft {
+rule Hacktool_FeliksPack3___PHP_Shells_phpft {
 	meta:
 		description = "Webshells Auto-generated - file phpft.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "60ef80175fcc6a879ca57c54226646b1"
 	strings:
 		$s6 = "PHP Files Thief"
@@ -6927,30 +7049,30 @@ rule FeliksPack3___PHP_Shells_phpft {
 	condition:
 		all of them
 }
-rule FSO_s_indexer {
+rule Hacktool_FSO_s_indexer {
 	meta:
 		description = "Webshells Auto-generated - file indexer.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "135fc50f85228691b401848caef3be9e"
 	strings:
 		$s3 = "<td>Nereye :<td><input type=\"text\" name=\"nereye\" size=25></td><td><input type=\"r"
 	condition:
 		all of them
 }
-rule r57shell {
+rule Hacktool_r57shell {
 	meta:
 		description = "Webshells Auto-generated - file r57shell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8023394542cddf8aee5dec6072ed02b5"
 	strings:
 		$s11 = " $_POST['cmd']=\"echo \\\"Now script try connect to"
 	condition:
 		all of them
 }
-rule bdcli100 {
+rule Hacktool_bdcli100 {
 	meta:
 		description = "Webshells Auto-generated - file bdcli100.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b12163ac53789fb4f62e4f17a8c2e028"
 	strings:
 		$s5 = "unable to connect to "
@@ -6958,10 +7080,10 @@ rule bdcli100 {
 	condition:
 		all of them
 }
-rule HYTop_DevPack_2005Red {
+rule Hacktool_HYTop_DevPack_2005Red {
 	meta:
 		description = "Webshells Auto-generated - file 2005Red.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d8ccda2214b3f6eabd4502a050eb8fe8"
 	strings:
 		$s0 = "scrollbar-darkshadow-color:#FF9DBB;"
@@ -6970,10 +7092,10 @@ rule HYTop_DevPack_2005Red {
 	condition:
 		all of them
 }
-rule HYTop2006_rar_Folder_2006X2 {
+rule Hacktool_HYTop2006_rar_Folder_2006X2 {
 	meta:
 		description = "Webshells Auto-generated - file 2006X2.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cc5bf9fc56d404ebbc492855393d7620"
 	strings:
 		$s2 = "Powered By "
@@ -6981,10 +7103,10 @@ rule HYTop2006_rar_Folder_2006X2 {
 	condition:
 		all of them
 }
-rule rdrbs084 {
+rule Hacktool_rdrbs084 {
 	meta:
 		description = "Webshells Auto-generated - file rdrbs084.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "ed30327b255816bdd7590bf891aa0020"
 	strings:
 		$s0 = "Create mapped port. You have to specify domain when using HTTP type."
@@ -6992,10 +7114,10 @@ rule rdrbs084 {
 	condition:
 		all of them
 }
-rule HYTop_CaseSwitch_2005 {
+rule Hacktool_HYTop_CaseSwitch_2005 {
 	meta:
 		description = "Webshells Auto-generated - file 2005.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8bf667ee9e21366bc0bd3491cb614f41"
 	strings:
 		$s1 = "MSComDlg.CommonDialog"
@@ -7009,30 +7131,30 @@ rule HYTop_CaseSwitch_2005 {
 	condition:
 		all of them
 }
-rule eBayId_index3 {
+rule Hacktool_eBayId_index3 {
 	meta:
 		description = "Webshells Auto-generated - file index3.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "0412b1e37f41ea0d002e4ed11608905f"
 	strings:
 		$s8 = "$err = \"<i>Your Name</i> Not Entered!</font></h2>Sorry, \\\"You"
 	condition:
 		all of them
 }
-rule FSO_s_phvayv {
+rule Hacktool_FSO_s_phvayv {
 	meta:
 		description = "Webshells Auto-generated - file phvayv.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "205ecda66c443083403efb1e5c7f7878"
 	strings:
 		$s2 = "wrap=\"OFF\">XXXX</textarea></font><font face"
 	condition:
 		all of them
 }
-rule byshell063_ntboot {
+rule Hacktool_byshell063_ntboot {
 	meta:
 		description = "Webshells Auto-generated - file ntboot.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "99b5f49db6d6d9a9faeffb29fd8e6d8c"
 	strings:
 		$s0 = "SYSTEM\\CurrentControlSet\\Services\\NtBoot"
@@ -7042,20 +7164,20 @@ rule byshell063_ntboot {
 	condition:
 		all of them
 }
-rule FSO_s_casus15_2 {
+rule Hacktool_FSO_s_casus15_2 {
 	meta:
 		description = "Webshells Auto-generated - file casus15.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8d155b4239d922367af5d0a1b89533a3"
 	strings:
 		$s0 = "copy ( $dosya_gonder"
 	condition:
 		all of them
 }
-rule installer {
+rule Hacktool_installer {
 	meta:
 		description = "Webshells Auto-generated - file installer.cmd"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a507919ae701cf7e42fa441d3ad95f8f"
 	strings:
 		$s0 = "Restore Old Vanquish"
@@ -7063,20 +7185,20 @@ rule installer {
 	condition:
 		all of them
 }
-rule uploader {
+rule Hacktool_uploader {
 	meta:
 		description = "Webshells Auto-generated - file uploader.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b9a9aab319964351b46bd5fc9d6246a8"
 	strings:
 		$s0 = "move_uploaded_file($userfile, \"entrika.php\"); "
 	condition:
 		all of them
 }
-rule FSO_s_remview_2 {
+rule Hacktool_FSO_s_remview_2 {
 	meta:
 		description = "Webshells Auto-generated - file remview.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b4a09911a5b23e00b55abe546ded691c"
 	strings:
 		$s0 = "<xmp>$out</"
@@ -7084,20 +7206,20 @@ rule FSO_s_remview_2 {
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_r57 {
+rule Hacktool_FeliksPack3___PHP_Shells_r57 {
 	meta:
 		description = "Webshells Auto-generated - file r57.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "903908b77a266b855262cdbce81c3f72"
 	strings:
 		$s1 = "$sql = \"LOAD DATA INFILE \\\"\".$_POST['test3_file']."
 	condition:
 		all of them
 }
-rule HYTop2006_rar_Folder_2006X {
+rule Hacktool_HYTop2006_rar_Folder_2006X {
 	meta:
 		description = "Webshells Auto-generated - file 2006X.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cf3ee0d869dd36e775dfcaa788db8e4b"
 	strings:
 		$s1 = "<input name=\"password\" type=\"password\" id=\"password\""
@@ -7105,20 +7227,20 @@ rule HYTop2006_rar_Folder_2006X {
 	condition:
 		all of them
 }
-rule FSO_s_phvayv_2 {
+rule Hacktool_FSO_s_phvayv_2 {
 	meta:
 		description = "Webshells Auto-generated - file phvayv.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "205ecda66c443083403efb1e5c7f7878"
 	strings:
 		$s2 = "rows=\"24\" cols=\"122\" wrap=\"OFF\">XXXX</textarea></font><font"
 	condition:
 		all of them
 }
-rule elmaliseker {
+rule Hacktool_elmaliseker {
 	meta:
 		description = "Webshells Auto-generated - file elmaliseker.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "ccf48af0c8c09bbd038e610a49c9862e"
 	strings:
 		$s0 = "javascript:Command('Download'"
@@ -7126,10 +7248,10 @@ rule elmaliseker {
 	condition:
 		all of them
 }
-rule shelltools_g0t_root_resolve {
+rule Hacktool_shelltools_g0t_root_resolve {
 	meta:
 		description = "Webshells Auto-generated - file resolve.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "69bf9aa296238610a0e05f99b5540297"
 	strings:
 		$s0 = "3^n6B(Ed3"
@@ -7142,10 +7264,10 @@ rule shelltools_g0t_root_resolve {
 	condition:
 		all of them
 }
-rule FSO_s_RemExp {
+rule Hacktool_FSO_s_RemExp {
 	meta:
 		description = "Webshells Auto-generated - file RemExp.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b69670ecdbb40012c73686cd22696eeb"
 	strings:
 		$s1 = "<td bgcolor=\"<%=BgColor%>\" title=\"<%=SubFolder.Name%>\"> <a href= \"<%=Request.Ser"
@@ -7154,20 +7276,20 @@ rule FSO_s_RemExp {
 	condition:
 		all of them
 }
-rule FSO_s_tool {
+rule Hacktool_FSO_s_tool {
 	meta:
 		description = "Webshells Auto-generated - file tool.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3a1e1e889fdd974a130a6a767b42655b"
 	strings:
 		$s7 = "\"\"%windir%\\\\calc.exe\"\")"
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_2005 {
+rule Hacktool_FeliksPack3___PHP_Shells_2005 {
 	meta:
 		description = "Webshells Auto-generated - file 2005.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "97f2552c2fafc0b2eb467ee29cc803c8"
 	strings:
 		$s0 = "window.open(\"\"&url&\"?id=edit&path=\"+sfile+\"&op=copy&attrib=\"+attrib+\"&dpath=\"+lp"
@@ -7175,10 +7297,10 @@ rule FeliksPack3___PHP_Shells_2005 {
 	condition:
 		all of them
 }
-rule byloader {
+rule Hacktool_byloader {
 	meta:
 		description = "Webshells Auto-generated - file byloader.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "0f0d6dc26055653f5844ded906ce52df"
 	strings:
 		$s0 = "SYSTEM\\CurrentControlSet\\Services\\NtfsChk"
@@ -7189,10 +7311,10 @@ rule byloader {
 	condition:
 		all of them
 }
-rule shelltools_g0t_root_Fport {
+rule Hacktool_shelltools_g0t_root_Fport {
 	meta:
 		description = "Webshells Auto-generated - file Fport.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "dbb75488aa2fa22ba6950aead1ef30d5"
 	strings:
 		$s4 = "Copyright 2000 by Foundstone, Inc."
@@ -7200,60 +7322,60 @@ rule shelltools_g0t_root_Fport {
 	condition:
 		all of them
 }
-rule BackDooR__fr_ {
+rule Hacktool_BackDooR__fr_ {
 	meta:
 		description = "Webshells Auto-generated - file BackDooR (fr).php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a79cac2cf86e073a832aaf29a664f4be"
 	strings:
 		$s3 = "print(\"<p align=\\\"center\\\"><font size=\\\"5\\\">Exploit include "
 	condition:
 		all of them
 }
-rule FSO_s_ntdaddy {
+rule Hacktool_FSO_s_ntdaddy {
 	meta:
 		description = "Webshells Auto-generated - file ntdaddy.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "f6262f3ad9f73b8d3e7d9ea5ec07a357"
 	strings:
 		$s1 = "<input type=\"text\" name=\".CMD\" size=\"45\" value=\"<%= szCMD %>\"> <input type=\"s"
 	condition:
 		all of them
 }
-rule nstview_nstview {
+rule Hacktool_nstview_nstview {
 	meta:
 		description = "Webshells Auto-generated - file nstview.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3871888a0c1ac4270104918231029a56"
 	strings:
 		$s4 = "open STDIN,\\\"<&X\\\";open STDOUT,\\\">&X\\\";open STDERR,\\\">&X\\\";exec(\\\"/bin/sh -i\\\");"
 	condition:
 		all of them
 }
-rule HYTop_DevPack_upload {
+rule Hacktool_HYTop_DevPack_upload {
 	meta:
 		description = "Webshells Auto-generated - file upload.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b09852bda534627949f0259828c967de"
 	strings:
 		$s0 = "<!-- PageUpload Below -->"
 	condition:
 		all of them
 }
-rule PasswordReminder {
+rule Hacktool_PasswordReminder {
 	meta:
 		description = "Webshells Auto-generated - file PasswordReminder.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "ea49d754dc609e8bfa4c0f95d14ef9bf"
 	strings:
 		$s3 = "The encoded password is found at 0x%8.8lx and has a length of %d."
 	condition:
 		all of them
 }
-rule Pack_InjectT {
+rule Hacktool_Pack_InjectT {
 	meta:
 		description = "Webshells Auto-generated - file InjectT.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "983b74ccd57f6195a0584cdfb27d55e8"
 	strings:
 		$s3 = "ail To Open Registry"
@@ -7264,10 +7386,10 @@ rule Pack_InjectT {
 	condition:
 		all of them
 }
-rule FSO_s_RemExp_2 {
+rule Hacktool_FSO_s_RemExp_2 {
 	meta:
 		description = "Webshells Auto-generated - file RemExp.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b69670ecdbb40012c73686cd22696eeb"
 	strings:
 		$s2 = " Then Response.Write \""
@@ -7275,20 +7397,20 @@ rule FSO_s_RemExp_2 {
 	condition:
 		all of them
 }
-rule FSO_s_c99 {
+rule Hacktool_FSO_s_c99 {
 	meta:
 		description = "Webshells Auto-generated - file c99.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5f9ba02eb081bba2b2434c603af454d0"
 	strings:
 		$s2 = "\"txt\",\"conf\",\"bat\",\"sh\",\"js\",\"bak\",\"doc\",\"log\",\"sfc\",\"cfg\",\"htacce"
 	condition:
 		all of them
 }
-rule rknt_zip_Folder_RkNT {
+rule Hacktool_rknt_zip_Folder_RkNT {
 	meta:
 		description = "Webshells Auto-generated - file RkNT.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5f97386dfde148942b7584aeb6512b85"
 	strings:
 		$s0 = "PathStripPathA"
@@ -7301,10 +7423,10 @@ rule rknt_zip_Folder_RkNT {
 	condition:
 		all of them
 }
-rule dbgntboot {
+rule Hacktool_dbgntboot {
 	meta:
 		description = "Webshells Auto-generated - file dbgntboot.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "4d87543d4d7f73c1529c9f8066b475ab"
 	strings:
 		$s2 = "now DOS is working at mode %d,faketype %d,against %s,has worked %d minutes,by sp"
@@ -7312,10 +7434,10 @@ rule dbgntboot {
 	condition:
 		all of them
 }
-rule PHP_shell {
+rule Hacktool_PHP_shell {
 	meta:
 		description = "Webshells Auto-generated - file shell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "45e8a00567f8a34ab1cccc86b4bc74b9"
 	strings:
 		$s0 = "AR8iROET6mMnrqTpC6W1Kp/DsTgxNby9H1xhiswfwgoAtED0y6wEXTihoAtICkIX6L1+vTUYWuWz"
@@ -7323,10 +7445,10 @@ rule PHP_shell {
 	condition:
 		all of them
 }
-rule hxdef100 {
+rule Hacktool_hxdef100 {
 	meta:
 		description = "Webshells Auto-generated - file hxdef100.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "55cc1769cef44910bd91b7b73dee1f6c"
 	strings:
 		$s0 = "RtlAnsiStringToUnicodeString"
@@ -7335,10 +7457,10 @@ rule hxdef100 {
 	condition:
 		all of them
 }
-rule rdrbs100 {
+rule Hacktool_rdrbs100 {
 	meta:
 		description = "Webshells Auto-generated - file rdrbs100.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "7c752bcd6da796d80a6830c61a632bff"
 	strings:
 		$s3 = "Server address must be IP in A.B.C.D format."
@@ -7346,10 +7468,10 @@ rule rdrbs100 {
 	condition:
 		all of them
 }
-rule Mithril_Mithril {
+rule Hacktool_Mithril_Mithril {
 	meta:
 		description = "Webshells Auto-generated - file Mithril.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "017191562d72ab0ca551eb89256650bd"
 	strings:
 		$s0 = "OpenProcess error!"
@@ -7363,10 +7485,10 @@ rule Mithril_Mithril {
 	condition:
 		all of them
 }
-rule hxdef100_2 {
+rule Hacktool_hxdef100_2 {
 	meta:
 		description = "Webshells Auto-generated - file hxdef100.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1b393e2e13b9c57fb501b7cd7ad96b25"
 	strings:
 		$s0 = "\\\\.\\mailslot\\hxdef-rkc000"
@@ -7375,10 +7497,10 @@ rule hxdef100_2 {
 	condition:
 		all of them
 }
-rule Release_dllTest {
+rule Hacktool_Release_dllTest {
 	meta:
 		description = "Webshells Auto-generated - file dllTest.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "76a59fc3242a2819307bb9d593bef2e0"
 	strings:
 		$s0 = ";;;Y;`;d;h;l;p;t;x;|;"
@@ -7394,20 +7516,20 @@ rule Release_dllTest {
 	condition:
 		all of them
 }
-rule webadmin {
+rule Hacktool_webadmin {
 	meta:
 		description = "Webshells Auto-generated - file webadmin.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3a90de401b30e5b590362ba2dde30937"
 	strings:
 		$s0 = "<input name=\\\"editfilename\\\" type=\\\"text\\\" class=\\\"style1\\\" value='\".$this->inpu"
 	condition:
 		all of them
 }
-rule commands {
+rule Hacktool_commands {
 	meta:
 		description = "Webshells Auto-generated - file commands.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "174486fe844cb388e2ae3494ac2d1ec2"
 	strings:
 		$s1 = "If CheckRecord(\"SELECT COUNT(ID) FROM VictimDetail WHERE VictimID = \" & VictimID"
@@ -7415,30 +7537,30 @@ rule commands {
 	condition:
 		all of them
 }
-rule hkdoordll {
+rule Hacktool_hkdoordll {
 	meta:
 		description = "Webshells Auto-generated - file hkdoordll.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b715c009d47686c0e62d0981efce2552"
 	strings:
 		$s6 = "Can't uninstall,maybe the backdoor is not installed or,the Password you INPUT is"
 	condition:
 		all of them
 }
-rule r57shell_2 {
+rule Hacktool_r57shell_2 {
 	meta:
 		description = "Webshells Auto-generated - file r57shell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8023394542cddf8aee5dec6072ed02b5"
 	strings:
 		$s2 = "echo \"<br>\".ws(2).\"HDD Free : <b>\".view_size($free).\"</b> HDD Total : <b>\".view_"
 	condition:
 		all of them
 }
-rule Mithril_v1_45_dllTest {
+rule Hacktool_Mithril_v1_45_dllTest {
 	meta:
 		description = "Webshells Auto-generated - file dllTest.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1b9e518aaa62b15079ff6edb412b21e9"
 	strings:
 		$s3 = "syspath"
@@ -7447,10 +7569,10 @@ rule Mithril_v1_45_dllTest {
 	condition:
 		all of them
 }
-rule dbgiis6cli {
+rule Hacktool_dbgiis6cli {
 	meta:
 		description = "Webshells Auto-generated - file dbgiis6cli.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3044dceb632b636563f66fee3aaaf8f3"
 	strings:
 		$s0 = "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
@@ -7458,20 +7580,20 @@ rule dbgiis6cli {
 	condition:
 		all of them
 }
-rule remview_2003_04_22 {
+rule Hacktool_remview_2003_04_22 {
 	meta:
 		description = "Webshells Auto-generated - file remview_2003_04_22.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "17d3e4e39fbca857344a7650f7ea55e3"
 	strings:
 		$s1 = "\"<b>\".mm(\"Eval PHP code\").\"</b> (\".mm(\"don't type\").\" \\\"&lt;?\\\""
 	condition:
 		all of them
 }
-rule FSO_s_test {
+rule Hacktool_FSO_s_test {
 	meta:
 		description = "Webshells Auto-generated - file test.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "82cf7b48da8286e644f575b039a99c26"
 	strings:
 		$s0 = "$yazi = \"test\" . \"\\r\\n\";"
@@ -7479,10 +7601,10 @@ rule FSO_s_test {
 	condition:
 		all of them
 }
-rule Debug_cress {
+rule Hacktool_Debug_cress {
 	meta:
 		description = "Webshells Auto-generated - file cress.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "36a416186fe010574c9be68002a7286a"
 	strings:
 		$s0 = "\\Mithril "
@@ -7490,10 +7612,10 @@ rule Debug_cress {
 	condition:
 		all of them
 }
-rule webshell {
+rule Hacktool_webshell {
 	meta:
 		description = "Webshells Auto-generated - file webshell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "f2f8c02921f29368234bfb4d4622ad19"
 	strings:
 		$s0 = "RhViRYOzz"
@@ -7504,10 +7626,10 @@ rule webshell {
 	condition:
 		all of them
 }
-rule FSO_s_EFSO_2 {
+rule Hacktool_FSO_s_EFSO_2 {
 	meta:
 		description = "Webshells Auto-generated - file EFSO_2.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a341270f9ebd01320a7490c12cb2e64c"
 	strings:
 		$s0 = ";!+/DRknD7+.\\mDrC(V+kcJznndm\\f|nzKuJb'r@!&0KUY@*Jb@#@&Xl\"dKVcJ\\CslU,),@!0KxD~mKV"
@@ -7515,20 +7637,20 @@ rule FSO_s_EFSO_2 {
 	condition:
 		all of them
 }
-rule thelast_index3 {
+rule Hacktool_thelast_index3 {
 	meta:
 		description = "Webshells Auto-generated - file index3.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cceff6dc247aaa25512bad22120a14b4"
 	strings:
 		$s5 = "$err = \"<i>Your Name</i> Not Entered!</font></h2>Sorry, \\\"Your Name\\\" field is r"
 	condition:
 		all of them
 }
-rule adjustcr {
+rule Hacktool_adjustcr {
 	meta:
 		description = "Webshells Auto-generated - file adjustcr.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "17037fa684ef4c90a25ec5674dac2eb6"
 	strings:
 		$s0 = "$Info: This file is packed with the UPX executable packer $"
@@ -7538,90 +7660,90 @@ rule adjustcr {
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_xIShell {
+rule Hacktool_FeliksPack3___PHP_Shells_xIShell {
 	meta:
 		description = "Webshells Auto-generated - file xIShell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "997c8437c0621b4b753a546a53a88674"
 	strings:
 		$s3 = "if (!$nix) { $xid = implode(explode(\"\\\\\",$xid),\"\\\\\\\\\");}echo (\"<td><a href='Java"
 	condition:
 		all of them
 }
-rule HYTop_AppPack_2005 {
+rule Hacktool_HYTop_AppPack_2005 {
 	meta:
 		description = "Webshells Auto-generated - file 2005.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "63d9fd24fa4d22a41fc5522fc7050f9f"
 	strings:
 		$s6 = "\" onclick=\"this.form.sqlStr.value='e:\\hytop.mdb"
 	condition:
 		all of them
 }
-rule xssshell {
+rule Hacktool_xssshell {
 	meta:
 		description = "Webshells Auto-generated - file xssshell.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8fc0ffc5e5fbe85f7706ffc45b3f79b4"
 	strings:
 		$s1 = "if( !getRequest(COMMANDS_URL + \"?v=\" + VICTIM + \"&r=\" + generateID(), \"pushComma"
 	condition:
 		all of them
 }
-rule FeliksPack3___PHP_Shells_usr {
+rule Hacktool_FeliksPack3___PHP_Shells_usr {
 	meta:
 		description = "Webshells Auto-generated - file usr.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "ade3357520325af50c9098dc8a21a024"
 	strings:
 		$s0 = "<?php $id_info = array('notify' => 'off','sub' => 'aasd','s_name' => 'nurullahor"
 	condition:
 		all of them
 }
-rule FSO_s_phpinj {
+rule Hacktool_FSO_s_phpinj {
 	meta:
 		description = "Webshells Auto-generated - file phpinj.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "dd39d17e9baca0363cc1c3664e608929"
 	strings:
 		$s4 = "echo '<a href='.$expurl.'> Click Here to Exploit </a> <br />';"
 	condition:
 		all of them
 }
-rule xssshell_db {
+rule Hacktool_xssshell_db {
 	meta:
 		description = "Webshells Auto-generated - file db.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cb62e2ec40addd4b9930a9e270f5b318"
 	strings:
 		$s8 = "'// By Ferruh Mavituna | http://ferruh.mavituna.com"
 	condition:
 		all of them
 }
-rule PHP_sh {
+rule Hacktool_PHP_sh {
 	meta:
 		description = "Webshells Auto-generated - file sh.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1e9e879d49eb0634871e9b36f99fe528"
 	strings:
 		$s1 = "\"@$SERVER_NAME \".exec(\"pwd\")"
 	condition:
 		all of them
 }
-rule xssshell_default {
+rule Hacktool_xssshell_default {
 	meta:
 		description = "Webshells Auto-generated - file default.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d156782ae5e0b3724de3227b42fcaf2f"
 	strings:
 		$s3 = "If ProxyData <> \"\" Then ProxyData = Replace(ProxyData, DATA_SEPERATOR, \"<br />\")"
 	condition:
 		all of them
 }
-rule EditServer_2 {
+rule Hacktool_EditServer_2 {
 	meta:
 		description = "Webshells Auto-generated - file EditServer.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5c1f25a4d206c83cdfb006b3eb4c09ba"
 	strings:
 		$s0 = "@HOTMAIL.COM"
@@ -7630,10 +7752,10 @@ rule EditServer_2 {
 	condition:
 		all of them
 }
-rule by064cli {
+rule Hacktool_by064cli {
 	meta:
 		description = "Webshells Auto-generated - file by064cli.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "10e0dff366968b770ae929505d2a9885"
 	strings:
 		$s7 = "packet dropped,redirecting"
@@ -7641,10 +7763,10 @@ rule by064cli {
 	condition:
 		all of them
 }
-rule Mithril_dllTest {
+rule Hacktool_Mithril_dllTest {
 	meta:
 		description = "Webshells Auto-generated - file dllTest.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a8d25d794d8f08cd4de0c3d6bf389e6d"
 	strings:
 		$s0 = "please enter the password:"
@@ -7652,10 +7774,10 @@ rule Mithril_dllTest {
 	condition:
 		all of them
 }
-rule peek_a_boo {
+rule Hacktool_peek_a_boo {
 	meta:
 		description = "Webshells Auto-generated - file peek-a-boo.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "aca339f60d41fdcba83773be5d646776"
 	strings:
 		$s0 = "__vbaHresultCheckObj"
@@ -7667,20 +7789,20 @@ rule peek_a_boo {
 	condition:
 		all of them
 }
-rule fmlibraryv3 {
+rule Hacktool_fmlibraryv3 {
 	meta:
 		description = "Webshells Auto-generated - file fmlibraryv3.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "c34c248fed6d5a20d8203924a2088acc"
 	strings:
 		$s3 = "ExeNewRs.CommandText = \"UPDATE \" & tablename & \" SET \" & ExeNewRsValues & \" WHER"
 	condition:
 		all of them
 }
-rule Debug_dllTest_2 {
+rule Hacktool_Debug_dllTest_2 {
 	meta:
 		description = "Webshells Auto-generated - file dllTest.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1b9e518aaa62b15079ff6edb412b21e9"
 	strings:
 		$s4 = "\\Debug\\dllTest.pdb"
@@ -7688,10 +7810,10 @@ rule Debug_dllTest_2 {
 	condition:
 		all of them
 }
-rule connector {
+rule Hacktool_connector {
 	meta:
 		description = "Webshells Auto-generated - file connector.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "3ba1827fca7be37c8296cd60be9dc884"
 	strings:
 		$s2 = "If ( AttackID = BROADCAST_ATTACK )"
@@ -7699,10 +7821,10 @@ rule connector {
 	condition:
 		all of them
 }
-rule shelltools_g0t_root_HideRun {
+rule Hacktool_shelltools_g0t_root_HideRun {
 	meta:
 		description = "Webshells Auto-generated - file HideRun.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "45436d9bfd8ff94b71eeaeb280025afe"
 	strings:
 		$s0 = "Usage -- hiderun [AppName]"
@@ -7710,20 +7832,32 @@ rule shelltools_g0t_root_HideRun {
 	condition:
 		all of them
 }
-rule PHP_Shell_v1_7 {
+rule Hacktool_regshell {
+	meta:
+		description = "Webshells Auto-generated - file regshell.exe"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
+		hash = "db2fdc821ca6091bab3ebd0d8bc46ded"
+	strings:
+		$s0 = "Changes the base hive to HKEY_CURRENT_USER."
+		$s4 = "Displays a list of values and sub-keys in a registry Hive."
+		$s5 = "Enter a menu selection number (1 - 3) or 99 to Exit: "
+	condition:
+		all of them
+}
+rule Hacktool_PHP_Shell_v1_7 {
 	meta:
 		description = "Webshells Auto-generated - file PHP_Shell_v1.7.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b5978501c7112584532b4ca6fb77cba5"
 	strings:
 		$s8 = "<title>[ADDITINAL TITTLE]-phpShell by:[YOURNAME]"
 	condition:
 		all of them
 }
-rule xssshell_save {
+rule Hacktool_xssshell_save {
 	meta:
 		description = "Webshells Auto-generated - file save.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "865da1b3974e940936fe38e8e1964980"
 	strings:
 		$s4 = "RawCommand = Command & COMMAND_SEPERATOR & Param & COMMAND_SEPERATOR & AttackID"
@@ -7731,10 +7865,10 @@ rule xssshell_save {
 	condition:
 		all of them
 }
-rule screencap {
+rule Hacktool_screencap {
 	meta:
 		description = "Webshells Auto-generated - file screencap.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "51139091dea7a9418a50f2712ea72aa6"
 	strings:
 		$s0 = "GetDIBColorTable"
@@ -7743,20 +7877,20 @@ rule screencap {
 	condition:
 		all of them
 }
-rule FSO_s_phpinj_2 {
+rule Hacktool_FSO_s_phpinj_2 {
 	meta:
 		description = "Webshells Auto-generated - file phpinj.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "dd39d17e9baca0363cc1c3664e608929"
 	strings:
 		$s9 = "<? system(\\$_GET[cpc]);exit; ?>' ,0 ,0 ,0 ,0 INTO"
 	condition:
 		all of them
 }
-rule ZXshell2_0_rar_Folder_zxrecv {
+rule Hacktool_ZXshell2_0_rar_Folder_zxrecv {
 	meta:
 		description = "Webshells Auto-generated - file zxrecv.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5d3d12a39f41d51341ef4cb7ce69d30f"
 	strings:
 		$s0 = "RyFlushBuff"
@@ -7769,50 +7903,50 @@ rule ZXshell2_0_rar_Folder_zxrecv {
 	condition:
 		all of them
 }
-rule FSO_s_ajan {
+rule Hacktool_FSO_s_ajan {
 	meta:
 		description = "Webshells Auto-generated - file ajan.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "22194f8c44524f80254e1b5aec67b03e"
 	strings:
 		$s4 = "entrika.write \"BinaryStream.SaveToFile"
 	condition:
 		all of them
 }
-rule c99shell {
+rule Hacktool_c99shell {
 	meta:
 		description = "Webshells Auto-generated - file c99shell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "90b86a9c63e2cd346fe07cea23fbfc56"
 	strings:
 		$s0 = "<br />Input&nbsp;URL:&nbsp;&lt;input&nbsp;name=\\\"uploadurl\\\"&nbsp;type=\\\"text\\\"&"
 	condition:
 		all of them
 }
-rule phpspy_2005_full {
+rule Hacktool_phpspy_2005_full {
 	meta:
 		description = "Webshells Auto-generated - file phpspy_2005_full.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "d1c69bb152645438440e6c903bac16b2"
 	strings:
 		$s7 = "echo \"  <td align=\\\"center\\\" nowrap valign=\\\"top\\\"><a href=\\\"?downfile=\".urlenco"
 	condition:
 		all of them
 }
-rule FSO_s_zehir4_2 {
+rule Hacktool_FSO_s_zehir4_2 {
 	meta:
 		description = "Webshells Auto-generated - file zehir4.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "5b496a61363d304532bcf52ee21f5d55"
 	strings:
 		$s4 = "\"Program Files\\Serv-u\\Serv"
 	condition:
 		all of them
 }
-rule httpdoor {
+rule Hacktool_httpdoor {
 	meta:
 		description = "Webshells Auto-generated - file httpdoor.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "6097ea963455a09474471a9864593dc3"
 	strings:
 		$s4 = "''''''''''''''''''DaJKHPam"
@@ -7822,20 +7956,20 @@ rule httpdoor {
 	condition:
 		all of them
 }
-rule FSO_s_indexer_2 {
+rule Hacktool_FSO_s_indexer_2 {
 	meta:
 		description = "Webshells Auto-generated - file indexer.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "135fc50f85228691b401848caef3be9e"
 	strings:
 		$s5 = "<td>Nerden :<td><input type=\"text\" name=\"nerden\" size=25 value=index.html></td>"
 	condition:
 		all of them
 }
-rule HYTop_DevPack_2005 {
+rule Hacktool_HYTop_DevPack_2005 {
 	meta:
 		description = "Webshells Auto-generated - file 2005.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "63d9fd24fa4d22a41fc5522fc7050f9f"
 	strings:
 		$s7 = "theHref=encodeForUrl(mid(replace(lcase(list.path),lcase(server.mapPath(\"/\")),\"\")"
@@ -7844,10 +7978,10 @@ rule HYTop_DevPack_2005 {
 	condition:
 		all of them
 }
-rule _root_040_zip_Folder_deploy {
+rule Hacktool__root_040_zip_Folder_deploy {
 	meta:
 		description = "Webshells Auto-generated - file deploy.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "2c9f9c58999256c73a5ebdb10a9be269"
 	strings:
 		$s5 = "halon synscan 127.0.0.1 1-65536"
@@ -7856,10 +7990,10 @@ rule _root_040_zip_Folder_deploy {
 	condition:
 		all of them
 }
-rule by063cli {
+rule Hacktool_by063cli {
 	meta:
 		description = "Webshells Auto-generated - file by063cli.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "49ce26eb97fd13b6d92a5e5d169db859"
 	strings:
 		$s2 = "#popmsghello,are you all right?"
@@ -7867,20 +8001,20 @@ rule by063cli {
 	condition:
 		all of them
 }
-rule icyfox007v1_10_rar_Folder_asp {
+rule Hacktool_icyfox007v1_10_rar_Folder_asp {
 	meta:
 		description = "Webshells Auto-generated - file asp.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "2c412400b146b7b98d6e7755f7159bb9"
 	strings:
 		$s0 = "<SCRIPT RUNAT=SERVER LANGUAGE=JAVASCRIPT>eval(Request.form('#')+'')</SCRIPT>"
 	condition:
 		all of them
 }
-rule FSO_s_EFSO_2_2 {
+rule Hacktool_FSO_s_EFSO_2_2 {
 	meta:
 		description = "Webshells Auto-generated - file EFSO_2.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "a341270f9ebd01320a7490c12cb2e64c"
 	strings:
 		$s0 = ";!+/DRknD7+.\\mDrC(V+kcJznndm\\f|nzKuJb'r@!&0KUY@*Jb@#@&Xl\"dKVcJ\\CslU,),@!0KxD~mKV"
@@ -7888,20 +8022,20 @@ rule FSO_s_EFSO_2_2 {
 	condition:
 		all of them
 }
-rule byshell063_ntboot_2 {
+rule Hacktool_byshell063_ntboot_2 {
 	meta:
 		description = "Webshells Auto-generated - file ntboot.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "cb9eb5a6ff327f4d6c46aacbbe9dda9d"
 	strings:
 		$s6 = "OK,job was done,cuz we have localsystem & SE_DEBUG_NAME:)"
 	condition:
 		all of them
 }
-rule u_uay {
+rule Hacktool_u_uay {
 	meta:
 		description = "Webshells Auto-generated - file uay.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "abbc7b31a24475e4c5d82fc4c2b8c7c4"
 	strings:
 		$s1 = "exec \"c:\\WINDOWS\\System32\\freecell.exe"
@@ -7909,10 +8043,10 @@ rule u_uay {
 	condition:
 		1 of them
 }
-rule bin_wuaus {
+rule Hacktool_bin_wuaus {
 	meta:
 		description = "Webshells Auto-generated - file wuaus.dll"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "46a365992bec7377b48a2263c49e4e7d"
 	strings:
 		$s1 = "9(90989@9V9^9f9n9v9"
@@ -7924,10 +8058,10 @@ rule bin_wuaus {
 	condition:
 		all of them
 }
-rule pwreveal {
+rule Hacktool_pwreveal {
 	meta:
 		description = "Webshells Auto-generated - file pwreveal.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "b4e8447826a45b76ca45ba151a97ad50"
 	strings:
 		$s0 = "*<Blank - no es"
@@ -7937,10 +8071,10 @@ rule pwreveal {
 	condition:
 		all of them
 }
-rule shelltools_g0t_root_xwhois {
+rule Hacktool_shelltools_g0t_root_xwhois {
 	meta:
 		description = "Webshells Auto-generated - file xwhois.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "0bc98bd576c80d921a3460f8be8816b4"
 	strings:
 		$s1 = "rting! "
@@ -7950,40 +8084,40 @@ rule shelltools_g0t_root_xwhois {
 	condition:
 		all of them
 }
-rule vanquish_2 {
+rule Hacktool_vanquish_2 {
 	meta:
 		description = "Webshells Auto-generated - file vanquish.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "2dcb9055785a2ee01567f52b5a62b071"
 	strings:
 		$s2 = "Vanquish - DLL injection failed:"
 	condition:
 		all of them
 }
-rule down_rar_Folder_down {
+rule Hacktool_down_rar_Folder_down {
 	meta:
 		description = "Webshells Auto-generated - file down.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "db47d7a12b3584a2e340567178886e71"
 	strings:
 		$s0 = "response.write \"<font color=blue size=2>NetBios Name: \\\\\"  & Snet.ComputerName &"
 	condition:
 		all of them
 }
-rule cmdShell {
+rule Hacktool_cmdShell {
 	meta:
 		description = "Webshells Auto-generated - file cmdShell.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "8a9fef43209b5d2d4b81dfbb45182036"
 	strings:
 		$s1 = "if cmdPath=\"wscriptShell\" then"
 	condition:
 		all of them
 }
-rule ZXshell2_0_rar_Folder_nc {
+rule Hacktool_ZXshell2_0_rar_Folder_nc {
 	meta:
 		description = "Webshells Auto-generated - file nc.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "2cd1bf15ae84c5f6917ddb128827ae8b"
 	strings:
 		$s0 = "WSOCK32.dll"
@@ -7993,10 +8127,10 @@ rule ZXshell2_0_rar_Folder_nc {
 	condition:
 		all of them
 }
-rule portlessinst {
+rule Hacktool_portlessinst {
 	meta:
 		description = "Webshells Auto-generated - file portlessinst.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "74213856fc61475443a91cd84e2a6c2f"
 	strings:
 		$s2 = "Fail To Open Registry"
@@ -8005,20 +8139,20 @@ rule portlessinst {
 	condition:
 		all of them
 }
-rule SetupBDoor {
+rule Hacktool_SetupBDoor {
 	meta:
 		description = "Webshells Auto-generated - file SetupBDoor.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "41f89e20398368e742eda4a3b45716b6"
 	strings:
 		$s1 = "\\BDoor\\SetupBDoor"
 	condition:
 		all of them
 }
-rule phpshell_3 {
+rule Hacktool_phpshell_3 {
 	meta:
 		description = "Webshells Auto-generated - file phpshell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "e8693a2d4a2ffea4df03bb678df3dc6d"
 	strings:
 		$s3 = "<input name=\"submit_btn\" type=\"submit\" value=\"Execute Command\"></p>"
@@ -8026,10 +8160,10 @@ rule phpshell_3 {
 	condition:
 		all of them
 }
-rule BIN_Server {
+rule Hacktool_BIN_Server {
 	meta:
 		description = "Webshells Auto-generated - file Server.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "1d5aa9cbf1429bb5b8bf600335916dcd"
 	strings:
 		$s0 = "configserver"
@@ -8041,30 +8175,30 @@ rule BIN_Server {
 	condition:
 		all of them
 }
-rule HYTop2006_rar_Folder_2006 {
+rule Hacktool_HYTop2006_rar_Folder_2006 {
 	meta:
 		description = "Webshells Auto-generated - file 2006.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "c19d6f4e069188f19b08fa94d44bc283"
 	strings:
 		$s6 = "strBackDoor = strBackDoor "
 	condition:
 		all of them
 }
-rule r57shell_3 {
+rule Hacktool_r57shell_3 {
 	meta:
 		description = "Webshells Auto-generated - file r57shell.php"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "87995a49f275b6b75abe2521e03ac2c0"
 	strings:
 		$s1 = "<b>\".$_POST['cmd']"
 	condition:
 		all of them
 }
-rule HDConfig {
+rule Hacktool_HDConfig {
 	meta:
 		description = "Webshells Auto-generated - file HDConfig.exe"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "7d60e552fdca57642fd30462416347bd"
 	strings:
 		$s0 = "An encryption key is derived from the password hash. "
@@ -8075,10 +8209,10 @@ rule HDConfig {
 	condition:
 		all of them
 }
-rule FSO_s_ajan_2 {
+rule Hacktool_FSO_s_ajan_2 {
 	meta:
 		description = "Webshells Auto-generated - file ajan.asp"
-		author = "Florian Roth"
+		author = "Yara Bulk Rule Hacktool_Generator by Florian Roth"
 		hash = "22194f8c44524f80254e1b5aec67b03e"
 	strings:
 		$s2 = "\"Set WshShell = CreateObject(\"\"WScript.Shell\"\")"
@@ -8087,7 +8221,7 @@ rule FSO_s_ajan_2 {
 		all of them
 }
 
-rule Webshell_and_Exploit_CN_APT_HK : Webshell
+rule Hacktool_Webshell_and_Exploit_CN_APT_HK : Webshell
 {
 meta:
 	author = "Florian Roth"
@@ -8102,7 +8236,7 @@ condition:
 	$a0 or ( all of ($s*) )
 }
 
-rule JSP_Browser_APT_webshell {
+rule Hacktool_JSP_Browser_APT_webshell {
 	meta:
 		description = "VonLoesch JSP Browser used as web shell by APT groups - jsp File browser 1.1a"
 		author = "F.Roth"
@@ -8117,7 +8251,7 @@ rule JSP_Browser_APT_webshell {
 		all of them
 }
 
-rule JSP_jfigueiredo_APT_webshell {
+rule Hacktool_JSP_jfigueiredo_APT_webshell {
 	meta:
 		description = "JSP Browser used as web shell by APT groups - author: jfigueiredo"
 		author = "F.Roth"
@@ -8131,7 +8265,7 @@ rule JSP_jfigueiredo_APT_webshell {
 		all of them
 }
 
-rule JSP_jfigueiredo_APT_webshell_2 {
+rule Hacktool_JSP_jfigueiredo_APT_webshell_2 {
 	meta:
 		description = "JSP Browser used as web shell by APT groups - author: jfigueiredo"
 		author = "F.Roth"
@@ -8147,7 +8281,22 @@ rule JSP_jfigueiredo_APT_webshell_2 {
 		all of ($a*) or all of ($s*)
 }
 
-rule Webshell_Insomnia {
+rule Hacktool_AJAX_FileUpload_webshell {
+	meta:
+		description = "AJAX JS/CSS components providing web shell by APT groups"
+		author = "F.Roth"
+		date = "12.10.2014"
+		score = 75
+		reference = "http://ceso.googlecode.com/svn/web/bko/filemanager/ajaxfileupload.js"
+	strings:
+		$a1 = "var frameId = 'jUploadFrame' + id;" ascii
+		$a2 = "var form = jQuery('<form  action=\"\" method=\"POST\" name=\"' + formId + '\" id=\"' + formId + '\" enctype=\"multipart/form-data\"></form>');" ascii
+		$a3 = "jQuery(\"<div>\").html(data).evalScripts();" ascii
+	condition:
+		all of them
+}
+
+rule Hacktool_Webshell_Insomnia {
 	meta:
 		description = "Insomnia Webshell - file InsomniaShell.aspx"
 		author = "Florian Roth"
@@ -8168,7 +8317,7 @@ rule Webshell_Insomnia {
 		3 of them
 }
 
-rule HawkEye_PHP_Panel {
+rule Hacktool_HawkEye_PHP_Panel {
 	meta:
 		description = "Detects HawkEye Keyloggers PHP Panel"
 		author = "Florian Roth"
@@ -8183,7 +8332,7 @@ rule HawkEye_PHP_Panel {
 		all of ($s*) and filesize < 600
 }
 
-rule SoakSoak_Infected_Wordpress {
+rule Hacktool_SoakSoak_Infected_Wordpress {
 	meta:
 		description = "Detects a SoakSoak infected Wordpress site http://goo.gl/1GzWUX"
 		reference = "http://goo.gl/1GzWUX"
@@ -8198,7 +8347,7 @@ rule SoakSoak_Infected_Wordpress {
 		all of ($s*)
 }
 
-rule Pastebin_Webshell {
+rule Hacktool_Pastebin_Webshell {
 	meta:
 		description = "Detects a web shell that downloads content from pastebin.com http://goo.gl/7dbyZs"
 		author = "Florian Roth"
@@ -8220,7 +8369,7 @@ rule Pastebin_Webshell {
 		1 of ($s*) or all of ($x*) or all of ($y*)
 }
 
-rule ASPXspy2 {
+rule Hacktool_ASPXspy2 {
 	meta:
 		description = "Web shell - file ASPXspy2.aspx"
 		author = "Florian Roth"
@@ -8248,16 +8397,16 @@ rule ASPXspy2 {
 
 
 /*
-	Yara Rule Set
+	Yara Rule Hacktool_Set
 	Author: Florian Roth
 	Date: 2016-01-11
 	Identifier: Web Shell Repo
 	Reference: https://github.com/nikicat/web-malware-collection
 */
 
-rule Webshell_27_9_c66_c99 {
+rule Hacktool_Webshell_27_9_c66_c99 {
 	meta:
-		description = "Detects Webshell - rule generated from from files 27.9.txt, c66.php, c99-shadows-mod.php, c99.php ..."
+		description = "Detects Webshell - rule Hacktool_generated from from files 27.9.txt, c66.php, c99-shadows-mod.php, c99.php ..."
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8280,7 +8429,7 @@ rule Webshell_27_9_c66_c99 {
 		filesize < 685KB and 1 of them
 }
 
-rule Webshell_acid_AntiSecShell_3 {
+rule Hacktool_Webshell_acid_AntiSecShell_3 {
 	meta:
 		description = "Detects Webshell Acid"
 		author = "Florian Roth"
@@ -8312,7 +8461,7 @@ rule Webshell_acid_AntiSecShell_3 {
 		filesize < 900KB and all of them
 }
 
-rule Webshell_c99_4 {
+rule Hacktool_Webshell_c99_4 {
 	meta:
 		description = "Detects C99 Webshell"
 		author = "Florian Roth"
@@ -8343,7 +8492,7 @@ rule Webshell_c99_4 {
 		filesize < 900KB and 1 of them
 }
 
-rule Webshell_r57shell_2 {
+rule Hacktool_Webshell_r57shell_2 {
 	meta:
 		description = "Detects Webshell R57"
 		author = "Florian Roth"
@@ -8370,9 +8519,9 @@ rule Webshell_r57shell_2 {
 		filesize < 900KB and all of them
 }
 
-rule Webshell_27_9_acid_c99_locus7s {
+rule Hacktool_Webshell_27_9_acid_c99_locus7s {
 	meta:
-		description = "Detects Webshell - rule generated from from files 27.9.txt, acid.php, c99_locus7s.txt"
+		description = "Detects Webshell - rule Hacktool_generated from from files 27.9.txt, acid.php, c99_locus7s.txt"
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8392,9 +8541,9 @@ rule Webshell_27_9_acid_c99_locus7s {
 		filesize < 1711KB and 1 of them
 }
 
-rule Webshell_Backdoor_PHP_Agent_r57_mod_bizzz_shell_r57 {
+rule Hacktool_Webshell_Backdoor_PHP_Agent_r57_mod_bizzz_shell_r57 {
 	meta:
-		description = "Detects Webshell - rule generated from from files Backdoor.PHP.Agent.php, r57.mod-bizzz.shell.txt ..."
+		description = "Detects Webshell - rule Hacktool_generated from from files Backdoor.PHP.Agent.php, r57.mod-bizzz.shell.txt ..."
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8417,9 +8566,9 @@ rule Webshell_Backdoor_PHP_Agent_r57_mod_bizzz_shell_r57 {
 		filesize < 600KB and all of them
 }
 
-rule Webshell_c100 {
+rule Hacktool_Webshell_c100 {
 	meta:
-		description = "Detects Webshell - rule generated from from files c100 v. 777shell"
+		description = "Detects Webshell - rule Hacktool_generated from from files c100 v. 777shell"
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8441,7 +8590,7 @@ rule Webshell_c100 {
 		filesize < 685KB and 2 of them
 }
 
-rule Webshell_AcidPoison {
+rule Hacktool_Webshell_AcidPoison {
 	meta:
 		description = "Detects Poison Sh3ll - Webshell"
 		author = "Florian Roth"
@@ -8464,9 +8613,9 @@ rule Webshell_AcidPoison {
 		filesize < 550KB and all of them
 }
 
-rule Webshell_acid_FaTaLisTiCz_Fx_fx_p0isoN_sh3ll_x0rg_byp4ss_256 {
+rule Hacktool_Webshell_acid_FaTaLisTiCz_Fx_fx_p0isoN_sh3ll_x0rg_byp4ss_256 {
 	meta:
-		description = "Detects Webshell"
+		description = "Detects Webshell - rule Hacktool_generated from from files acid.php, FaTaLisTiCz_Fx.txt, fx.txt, p0isoN.sh3ll.txt, x0rg.byp4ss.txt"
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8483,9 +8632,9 @@ rule Webshell_acid_FaTaLisTiCz_Fx_fx_p0isoN_sh3ll_x0rg_byp4ss_256 {
 		filesize < 882KB and all of them
 }
 
-rule Webshell_Ayyildiz {
+rule Hacktool_Webshell_Ayyildiz {
 	meta:
-		description = "Detects Webshell"
+		description = "Detects Webshell - rule Hacktool_generated from from files Ayyildiz Tim  -AYT- Shell v 2.1 Biz.txt, Macker's Private PHPShell.php, matamu.txt, myshell.txt, PHP Shell.txt"
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8502,9 +8651,9 @@ rule Webshell_Ayyildiz {
 		filesize < 112KB and all of them
 }
 
-rule Webshell_zehir {
+rule Hacktool_Webshell_zehir {
 	meta:
-		description = "Detects Webshell - rule generated from from files elmaliseker.asp, zehir.asp, zehir.txt, zehir4.asp, zehir4.txt"
+		description = "Detects Webshell - rule Hacktool_generated from from files elmaliseker.asp, zehir.asp, zehir.txt, zehir4.asp, zehir4.txt"
 		author = "Florian Roth"
 		reference = "https://github.com/nikicat/web-malware-collection"
 		date = "2016-01-11"
@@ -8519,282 +8668,4 @@ rule Webshell_zehir {
 		$s2 = "if (frmUpload.max.value<=0) frmUpload.max.value=1;" fullword ascii
 	condition:
 		filesize < 200KB and 1 of them
-}
-
-/*
-	Yara Rule Set
-	Author: Florian Roth
-	Date: 2016-09-10
-	Identifier: Webshells PHP bartblaze
-*/
-
-/* Rule Set ----------------------------------------------------------------- */
-
-rule UploadShell_98038f1efa4203432349badabad76d44337319a6 {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "506a6ab6c49e904b4adc1f969c91e4f1a7dde164be549c6440e766de36c93215"
-	strings:
-		$s2 = "$lol = file_get_contents(\"../../../../../wp-config.php\");" fullword ascii
-		$s6 = "@unlink(\"./export-check-settings.php\");" fullword ascii
-		$s7 = "$xos = \"Safe-mode:[Safe-mode:\".$hsafemode.\"] " fullword ascii
-	condition:
-		( uint16(0) == 0x3f3c and filesize < 6KB and ( all of ($s*) ) ) or ( all of them )
-}
-
-rule DKShell_f0772be3c95802a2d1e7a4a3f5a45dcdef6997f3 {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "7ea49d5c29f1242f81f2393b514798ff7caccb50d46c60bdfcf61db00043473b"
-	strings:
-		$s1 = "<?php Error_Reporting(0); $s_pass = \"" ascii
-		$s2 = "$s_func=\"cr\".\"eat\".\"e_fun\".\"cti\".\"on" ascii
-	condition:
-		( uint16(0) == 0x3c0a and filesize < 300KB and all of them )
-}
-
-rule Unknown_8af033424f9590a15472a23cc3236e68070b952e {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "3382b5eaaa9ad651ab4793e807032650667f9d64356676a16ae3e9b02740ccf3"
-	strings:
-		$s1 = "$check = $_SERVER['DOCUMENT_ROOT']" fullword ascii
-		$s2 = "$fp=fopen(\"$check\",\"w+\");" fullword ascii
-		$s3 = "fwrite($fp,base64_decode('" ascii
-	condition:
-		( uint16(0) == 0x6324 and filesize < 6KB and ( all of ($s*) ) ) or ( all of them )
-}
-
-rule DkShell_4000bd83451f0d8501a9dfad60dce39e55ae167d {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "51a16b09520a3e063adf10ff5192015729a5de1add8341a43da5326e626315bd"
-	strings:
-		$x1 = "DK Shell - Took the Best made it Better..!!" fullword ascii
-		$x2 = "preg_replace(\"/.*/e\",\"\\x65\\x76\\x61\\x6C\\x28\\x67\\x7A\\x69\\x6E\\x66\\x6C\\x61\\x74\\x65\\x28\\x62\\x61\\x73\\x65\\x36\\x" ascii
-		$x3 = "echo '<b>Sw Bilgi<br><br>'.php_uname().'<br></b>';" fullword ascii
-
-		$s1 = "echo '<form action=\"\" method=\"post\" enctype=\"multipart/form-data\" name=\"uploader\" id=\"uploader\">';" fullword ascii
-		$s9 = "$x = $_GET[\"x\"];" fullword ascii
-	condition:
-		( uint16(0) == 0x3f3c and filesize < 200KB and 1 of ($x*) ) or ( 3 of them )
-}
-
-rule WebShell_5786d7d9f4b0df731d79ed927fb5a124195fc901 {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "b1733cbb0eb3d440c4174cc67ca693ba92308ded5fc1069ed650c3c78b1da4bc"
-	strings:
-		$s1 = "preg_replace(\"\\x2F\\x2E\\x2A\\x2F\\x65\",\"\\x65\\x76\\x61\\x6C\\x28\\x67\\x7A\\x69\\x6E\\x66\\x6C\\x61\\x74\\x65\\x28\\x62\\x" ascii
-		$s2 = "input[type=text], input[type=password]{" fullword ascii
-	condition:
-		( uint16(0) == 0x6c3c and filesize < 80KB and all of them )
-}
-
-rule webshell_e8eaf8da94012e866e51547cd63bb996379690bf {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "027544baa10259939780e97dc908bd43f0fb940510119fc4cce0883f3dd88275"
-	strings:
-		$x1 = "@exec('./bypass/ln -s /etc/passwd 1.php');" fullword ascii
-		$x2 = "echo \"<iframe src=mysqldumper/index.php width=100% height=100% frameborder=0></iframe> \";" fullword ascii
-		$x3 = "@exec('tar -xvf mysqldumper.tar.gz');" fullword ascii
-	condition:
-		( uint16(0) == 0x213c and filesize < 100KB and 1 of ($x*) ) or ( 2 of them )
-}
-
-rule Unknown_0f06c5d1b32f4994c3b3abf8bb76d5468f105167 {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "6362372850ac7455fa9461ed0483032a1886543f213a431f81a2ac76d383b47e"
-	strings:
-		$s1 = "$check = $_SERVER['DOCUMENT_ROOT'] . \"/libraries/lola.php\" ;" fullword ascii
-		$s2 = "$fp=fopen(\"$check\",\"w+\");" fullword ascii
-		$s3 = "fwrite($fp,base64_decode('" ascii
-	condition:
-		( uint16(0) == 0x6324 and filesize < 2KB and all of them )
-}
-
-rule WSOShell_0bbebaf46f87718caba581163d4beed56ddf73a7 {
-	meta:
-		description = "Detects a web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		hash1 = "d053086907aed21fbb6019bf9e644d2bae61c63563c4c3b948d755db3e78f395"
-	strings:
-		$s8 = "$default_charset='Wi'.'ndo.'.'ws-12'.'51';" fullword ascii
-		$s9 = "$mosimage_session = \"" fullword ascii
-	condition:
-		( uint16(0) == 0x3f3c and filesize < 300KB and all of them )
-}
-
-rule WebShell_Generic_1609_A {
-	meta:
-		description = "Auto-generated rule"
-		author = "Florian Roth"
-		reference = "https://github.com/bartblaze/PHP-backdoors"
-		date = "2016-09-10"
-		super_rule = 1
-		hash1 = "c817a490cfd4d6377c15c9ac9bcfa136f4a45ff5b40c74f15216c030f657d035"
-		hash3 = "69b9d55ea2eb4a0d9cfe3b21b0c112c31ea197d1cb00493d1dddc78b90c5745e"
-	strings:
-		$s1 = "return $qwery45234dws($b);" fullword ascii
-	condition:
-		( uint16(0) == 0x3f3c and 1 of them )
-}
-
-rule Nishang_Webshell {
-	meta:
-		description = "Detects a ASPX web shell"
-		author = "Florian Roth"
-		reference = "https://github.com/samratashok/nishang"
-		date = "2016-09-11"
-	strings:
-		$s1 = "psi.Arguments = \"-noninteractive \" + \"-executionpolicy bypass \" + arg;" ascii
-		$s2 = "output.Text += \"\nPS> \" + console.Text + \"\n\" + do_ps(console.Text);" ascii
-		$s3 = "<title>Antak Webshell</title>" fullword ascii
-		$s4 = "<asp:Button ID=\"executesql\" runat=\"server\" Text=\"Execute SQL Query\"" ascii
-	condition:
-		( uint16(0) == 0x253C and filesize < 100KB and 1 of ($s*) )
-}
-
-
-/*
-   Yara Rule Set
-   Author: Florian Roth
-   Date: 2017-02-28
-   Identifier: Simple PHP Webshell
-*/
-
-/* Rule Set ----------------------------------------------------------------- */
-
-rule PHP_Webshell_1_Feb17 {
-   meta:
-      description = "Detects a simple cloaked PHP web shell"
-      author = "Florian Roth"
-      reference = "https://isc.sans.edu/diary/Analysis+of+a+Simple+PHP+Backdoor/22127"
-      date = "2017-02-28"
-   strings:
-      $h1 = "<?php ${\"\\x" ascii
-
-      $x1 = "\";global$auth;function sh_decrypt_phase($data,$key){${\"" ascii
-      $x2 = "global$auth;return sh_decrypt_phase(sh_decrypt_phase($" ascii
-      $x3 = "]}[\"\x64\"]);}}echo " ascii
-      $x4 = "\"=>@phpversion(),\"\\x" ascii
-
-      /* Decloaked version */
-      $s1 = "$i=Array(\"pv\"=>@phpversion(),\"sv\"" ascii
-      $s3 = "$data = @unserialize(sh_decrypt(@base64_decode($data),$data_key));" ascii
-   condition:
-      ( $h1 at 0 and 1 of them ) or 2 of them
-}
-
-rule Webshell_Tiny_JSP_2 {
-	meta:
-		description = "Detects a tiny webshell - chine chopper"
-		author = "Florian Roth"
-		date = "2015-12-05"
-		score = 100
-	strings:
-		$s1 = "<%eval(Request(" nocase
-	condition:
-		uint16(0) == 0x253c and filesize < 40 and all of them
-}
-
-/*
-   Yara Rule Set
-   Author: Florian Roth
-   Date: 2017-06-25
-   Identifier: Wordpress Webshell
-   Reference: Internal Research
-*/
-
-/* Rule Set ----------------------------------------------------------------- */
-
-rule Wordpress_Config_Webshell_Preprend {
-   meta:
-      description = "Webshell that uses standard Wordpress wp-config.php file and appends the malicious code in front of it"
-      author = "Florian Roth"
-      reference = "Internal Research"
-      date = "2017-06-25"
-		score = 65
-   strings:
-      $x1 = " * @package WordPress" fullword ascii
-
-      $s1 = "define('DB_NAME'," ascii
-      $s2 = "require_once(ABSPATH . 'wp-settings.php');" ascii
-
-      $fp1 = "iThemes Security Config" ascii
-   condition:
-      uint32(0) == 0x68703f3c and filesize < 400KB and
-      $x1 and
-      all of ($s*) and
-      not $x1 in (0..1000) and
-      not 1 of ($fp*)
-}
-
-/*
-   Yara Rule Set
-   Author: Florian Roth
-   Date: 2017-07-11
-   Identifier: PAS Webshell
-*/
-
-/* Rule Set ----------------------------------------------------------------- */
-
-rule PAS_Webshell_Encoded {
-   meta:
-      description = "Detects a PAS webshell"
-      author = "Florian Roth"
-      reference = "http://blog.talosintelligence.com/2017/07/the-medoc-connection.html"
-      date = "2017-07-11"
-      score = 80
-   strings:
-      $head1 = "<?php $____=" fullword ascii
-      $head2 = "'base'.(32*2).'"
-
-      $enc1 = "isset($_COOKIE['___']" ascii
-      $enc2 = "if($___!==NULL){" ascii
-      $enc3 = ").substr(md5(strrev($" ascii
-      $enc4 = "]))%256);$" ascii
-      $enc5 = "]))@setcookie('" ascii
-      $enc6 = "]=chr(( ord($_" ascii
-
-      /* =\x0A'));if(isset($_COOKIE[' */
-      $x1 = { 3D 0A 27 29 29 3B 69 66 28 69 73 73 65 74 28 24 5F 43 4F 4F 4B 49 45 5B 27 }
-
-      $foot1 = "value=\"\"/><input type=\"submit\" value=\"&gt;\"/></form>"
-      $foot2 = "();}} @header(\"Status: 404 Not Found\"); ?>"
-   condition:
-      ( uint32(0) == 0x68703f3c and filesize < 80KB and (
-         3 of them or
-         $head1 at 0 or
-         $head2 in (0..20) or
-         1 of ($x*)
-         )
-      ) or
-      $foot1 at (filesize-52) or
-      $foot2 at (filesize-44)
 }
