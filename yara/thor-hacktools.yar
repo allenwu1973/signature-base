@@ -2836,7 +2836,8 @@ rule Hacktool_DarkComet_Keylogger_File
 }
 
 /* Mimikatz */
-
+/*
+//FP with windows defender
 rule Hacktool_Mimikatz_Memory_Rule_1 : APT {
    meta:
       author = "Florian Roth"
@@ -2862,7 +2863,7 @@ rule Hacktool_Mimikatz_Memory_Rule_1 : APT {
    condition:
       1 of them
 }
-
+*/
 rule Hacktool_Mimikatz_Memory_Rule_2 : APT {
    meta:
       description = "Mimikatz Rule Hacktool_generated from a memory dump"
